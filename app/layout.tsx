@@ -1,0 +1,54 @@
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { Providers } from "@/components/providers";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import "./globals.css";
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+export const metadata: Metadata = {
+  title: "Titan Soles — AI-Powered Footwear Marketplace",
+  description:
+    "Discover premium footwear through natural conversation. Titan AI finds your perfect shoes from verified stores worldwide.",
+  keywords: [
+    "shoes",
+    "footwear",
+    "AI shopping",
+    "sneakers",
+    "marketplace",
+    "Titan Soles",
+  ],
+  openGraph: {
+    title: "Titan Soles — AI-Powered Footwear Marketplace",
+    description:
+      "Find your perfect shoes with natural language. Verified stores. AI-curated recommendations.",
+    type: "website",
+    locale: "en_US",
+    siteName: "Titan Soles",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Titan Soles — AI-Powered Footwear Marketplace",
+    description:
+      "Find your perfect shoes with natural language. Verified stores. AI-curated recommendations.",
+  },
+  robots: { index: true, follow: true },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="en" className={`${inter.variable} h-full scroll-smooth`}>
+      <body className="min-h-full bg-[#08111E] font-sans text-white antialiased">
+        <Providers>
+          <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
+        </Providers>
+      </body>
+    </html>
+  );
+}
