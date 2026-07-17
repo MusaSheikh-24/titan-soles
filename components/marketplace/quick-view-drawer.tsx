@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import {
   X,
@@ -12,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Store,
+  ArrowUpRight,
 } from "lucide-react";
 import { getProductMedia, type Product } from "./products-data";
 import { cn } from "@/lib/utils";
@@ -298,21 +300,31 @@ export function QuickViewDrawer({
               </div>
             </div>
 
-            <div className="flex gap-3 border-t border-black/[0.05] px-8 py-5">
-              <button
-                type="button"
-                className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-full bg-[#111111] text-[14px] font-medium text-white transition-all duration-[250ms] hover:bg-black active:scale-[0.98]"
+            <div className="flex flex-col gap-3 border-t border-black/[0.05] px-8 py-5">
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-full bg-[#111111] text-[14px] font-medium text-white transition-all duration-[250ms] hover:bg-black active:scale-[0.98]"
+                >
+                  <ShoppingBag className="h-4 w-4" strokeWidth={1.5} />
+                  Add to bag
+                </button>
+                <button
+                  type="button"
+                  className="flex h-14 w-14 items-center justify-center rounded-full border border-black/[0.05] text-[#111111] transition-all duration-[250ms] hover:bg-[#FAFAFA]"
+                  aria-label="Save"
+                >
+                  <Heart className="h-4 w-4" strokeWidth={1.5} />
+                </button>
+              </div>
+              <Link
+                href={`/product/${product.id}`}
+                onClick={onClose}
+                className="inline-flex h-12 items-center justify-center gap-1.5 rounded-full border border-black/[0.08] text-[13px] font-semibold text-[#111111] transition-colors hover:bg-[#FAFAFA]"
               >
-                <ShoppingBag className="h-4 w-4" strokeWidth={1.5} />
-                Add to bag
-              </button>
-              <button
-                type="button"
-                className="flex h-14 w-14 items-center justify-center rounded-full border border-black/[0.05] text-[#111111] transition-all duration-[250ms] hover:bg-[#FAFAFA]"
-                aria-label="Save"
-              >
-                <Heart className="h-4 w-4" strokeWidth={1.5} />
-              </button>
+                View full details
+                <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={1.75} />
+              </Link>
             </div>
           </motion.aside>
         </>

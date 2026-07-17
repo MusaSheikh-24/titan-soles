@@ -60,11 +60,10 @@ function Chip({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full px-4 py-2 text-[14px] font-medium transition-all duration-[250ms] ${
-        active
+      className={`rounded-full px-4 py-2 text-[14px] font-medium transition-all duration-250 ${active
           ? "bg-[#111111] text-white"
-          : "border border-black/[0.05] bg-[#FAFAFA] text-[#6B7280] hover:text-[#111111]"
-      }`}
+          : "border border-black/5 bg-[#FAFAFA] text-[#6B7280] hover:text-[#111111]"
+        }`}
     >
       {label}
     </button>
@@ -112,7 +111,7 @@ export function FilterDrawer({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[90]">
+    <div className="fixed inset-0 z-90">
       <button
         type="button"
         className="absolute inset-0 bg-[#111111]/25 backdrop-blur-sm"
@@ -120,7 +119,7 @@ export function FilterDrawer({
         aria-label="Close filters"
       />
       <aside
-        className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col bg-white shadow-[0_0_80px_rgba(0,0,0,0.12)] animate-in slide-in-from-right duration-[250ms]"
+        className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col bg-white shadow-[0_0_80px_rgba(0,0,0,0.12)] animate-in slide-in-from-right duration-250"
         role="dialog"
         aria-modal="true"
         aria-label="All filters"
@@ -137,7 +136,7 @@ export function FilterDrawer({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-[#6B7280] transition-all duration-[250ms] hover:bg-black/[0.04] hover:text-[#111111]"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-[#6B7280] transition-all duration-250 hover:bg-black/40 hover:text-[#111111]"
             aria-label="Close"
           >
             <X className="h-4 w-4" strokeWidth={1.5} />
@@ -226,12 +225,12 @@ export function FilterDrawer({
           </section>
         </div>
 
-        <div className="flex gap-3 border-t border-black/[0.05] px-8 py-5">
+        <div className="flex gap-3 border-t border-black/5 px-8 py-5">
           {hasActiveFilters && (
             <button
               type="button"
               onClick={clearAllFilters}
-              className="h-14 flex-1 rounded-full text-[14px] font-medium text-[#6B7280] transition-all duration-[250ms] hover:bg-[#FAFAFA] hover:text-[#111111]"
+              className="h-14 flex-1 rounded-full text-[14px] font-medium text-[#6B7280] transition-all duration-250 hover:bg-[#FAFAFA] hover:text-[#111111]"
             >
               Clear
             </button>
@@ -239,7 +238,7 @@ export function FilterDrawer({
           <button
             type="button"
             onClick={onClose}
-            className="h-14 flex-[2] rounded-full bg-[#111111] text-[14px] font-medium text-white transition-all duration-[250ms] hover:bg-black"
+            className="h-14 flex-2 rounded-full bg-[#111111] text-[14px] font-medium text-white transition-all duration-250 hover:bg-black"
           >
             Show results
           </button>

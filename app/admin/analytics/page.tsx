@@ -73,7 +73,7 @@ export default function AdminAnalytics() {
           <div className="relative">
             <button
               onClick={() => setRangeOpen(!rangeOpen)}
-              className="flex h-10 items-center gap-2 rounded-2xl border border-border bg-white/[0.04] px-4 text-sm text-foreground hover:bg-white/[0.06]"
+              className="flex h-10 items-center gap-2 rounded-2xl border border-border bg-white/4 px-4 text-sm text-foreground hover:bg-white/6]"
             >
               {range}
               <ChevronDown className="h-3.5 w-3.5 text-muted" />
@@ -86,9 +86,8 @@ export default function AdminAnalytics() {
                     <button
                       key={r}
                       onClick={() => { setRange(r); setRangeOpen(false); }}
-                      className={`w-full px-4 py-2.5 text-left text-sm transition-colors hover:bg-white/[0.03] ${
-                        range === r ? "text-primary font-medium" : "text-foreground"
-                      }`}
+                      className={`w-full px-4 py-2.5 text-left text-sm transition-colors hover:bg-white/3 ${range === r ? "text-primary font-medium" : "text-foreground"
+                        }`}
                     >
                       {r}
                     </button>
@@ -115,9 +114,8 @@ export default function AdminAnalytics() {
                     <p className="text-sm text-muted">{m.label}</p>
                     <p className="mt-1 text-2xl font-semibold text-foreground">{m.value}</p>
                   </div>
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${
-                    m.color === "text-primary" ? "bg-primary/10" : m.color === "text-accent" ? "bg-accent/10" : m.color === "text-success" ? "bg-success/10" : "bg-warning/10"
-                  }`}>
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${m.color === "text-primary" ? "bg-primary/10" : m.color === "text-accent" ? "bg-accent/10" : m.color === "text-success" ? "bg-success/10" : "bg-warning/10"
+                    }`}>
                     <m.icon className={`h-5 w-5 ${m.color}`} />
                   </div>
                 </div>
@@ -143,7 +141,7 @@ export default function AdminAnalytics() {
               <div className="flex items-end justify-between gap-2" style={{ height: 160 }}>
                 {data.map((d) => (
                   <div key={d.day} className="flex flex-1 flex-col items-center gap-2">
-                    <div className="w-full rounded-lg bg-gradient-to-t from-primary/60 to-primary/30 transition-all hover:from-primary/80" style={{ height: `${(d.views / maxViews) * 140}px` }} />
+                    <div className="w-full rounded-lg bg-linear-to-t from-primary/60 to-primary/30 transition-all hover:from-primary/80" style={{ height: `${(d.views / maxViews) * 140}px` }} />
                     <span className="text-[11px] text-muted">{d.day}</span>
                   </div>
                 ))}
@@ -162,7 +160,7 @@ export default function AdminAnalytics() {
               <div className="flex items-end justify-between gap-2" style={{ height: 160 }}>
                 {data.map((d) => (
                   <div key={d.day} className="flex flex-1 flex-col items-center gap-2">
-                    <div className="w-full rounded-lg bg-gradient-to-t from-accent/60 to-accent/30 transition-all hover:from-accent/80" style={{ height: `${(d.revenue / maxRevenue) * 140}px` }} />
+                    <div className="w-full rounded-lg bg-linear-to-t from-accent/60 to-accent/30 transition-all hover:from-accent/80" style={{ height: `${(d.revenue / maxRevenue) * 140}px` }} />
                     <span className="text-[11px] text-muted">{d.day}</span>
                   </div>
                 ))}
@@ -187,12 +185,12 @@ export default function AdminAnalytics() {
                 { source: "Social Media", percentage: 22, visits: "31.4K", color: "bg-success" },
                 { source: "Referral", percentage: 18, visits: "25.7K", color: "bg-warning" },
               ].map((s) => (
-                <div key={s.source} className="rounded-2xl border border-border bg-white/[0.02] p-4">
+                <div key={s.source} className="rounded-2xl border border-border bg-white/2 p-4">
                   <div className="mb-3 flex items-center justify-between">
                     <p className="text-sm font-medium text-foreground">{s.source}</p>
                     <span className="text-xs text-muted">{s.visits}</span>
                   </div>
-                  <div className="mb-2 h-2 overflow-hidden rounded-full bg-white/[0.06]">
+                  <div className="mb-2 h-2 overflow-hidden rounded-full bg-white/6">
                     <div className={`h-full rounded-full ${s.color} transition-all`} style={{ width: `${s.percentage}%` }} />
                   </div>
                   <p className="text-right text-xs font-medium text-foreground">{s.percentage}%</p>

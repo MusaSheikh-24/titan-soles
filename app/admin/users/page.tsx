@@ -37,6 +37,8 @@ const statusStyles: Record<string, string> = {
   pending: "bg-warning/10 text-warning border-warning/20",
 };
 
+type UserKey = "name" | "role" | "orders" | "spent" | "joined" | "status";
+
 export default function AdminUsers() {
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
@@ -71,6 +73,15 @@ export default function AdminUsers() {
       totalSpent: users.reduce((s, u) => s + u.spent, 0),
     };
   }, []);
+
+  const columns: { key: UserKey; label: string }[] = [
+    { key: "name", label: "User" },
+    { key: "role", label: "Role" },
+    { key: "orders", label: "Orders" },
+    { key: "spent", label: "Total Spent" },
+    { key: "joined", label: "Joined" },
+    { key: "status", label: "Status" },
+  ];
 
   return (
     <div className="space-y-6">
@@ -164,7 +175,7 @@ export default function AdminUsers() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border">
-                    {[{ key: "name", label: "User" }, { key: "role", label: "Role" }, { key: "orders", label: "Orders" }, { key: "spent", label: "Total Spent" }, { key: "joined", label: "Joined" }, { key: "status", label: "Status" }].map(({ key, label }) => (
+                    {columns.map(({ key, label }) => (
                       <th key={key} className="cursor-pointer whitespace-nowrap px-6 py-3 text-left text-xs font-medium text-muted transition-colors hover:text-foreground" onClick={() => toggleSort(key)}>
                         <div className="flex items-center gap-1">{label}<ArrowUpDown className={cn("h-3 w-3", sort.key === key ? "text-primary" : "text-border")} /></div>
                       </th>

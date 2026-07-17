@@ -1,51 +1,39 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
-
-export type SortDirection = "asc" | "desc";
-
-export interface SortState {
-  key: string;
-  direction: SortDirection;
-}
+import { useMemo, useState } from "react";
 
 export function useTableSort<T extends Record<string, unknown>>(
   data: T[],
-  defaultKey?: string
+  defaultKey: keyof T
 ) {
-  const [sort, setSort] = useState<SortState>({
-    key: defaultKey ?? "",
-    direction: "asc",
-  });
+  const [sortKey, setSortKey] = useState<keyof T>(defaultKey);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+
+  const toggleSort = (key: keyof T) => {
+    if (key === sortKey) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
 
   const sorted = useMemo(() => {
-    if (!sort.key) return data;
-    return [...data].sort((a, b) => {
-      const aVal = a[sort.key];
-      const bVal = b[sort.key];
-
-      if (aVal == null) return 1;
-      if (bVal == null) return -1;
-
-      let cmp = 0;
-      if (typeof aVal === "string" && typeof bVal === "string") {
-        cmp = aVal.localeCompare(bVal);
-      } else if (typeof aVal === "number" && typeof bVal === "number") {
-        cmp = aVal - bVal;
-      } else {
-        cmp = String(aVal).localeCompare(String(bVal));
-      }
-
-      return sort.direction === "asc" ? cmp : -cmp;
+    const arr = [...data];
+    arr.sort((a, b) => {
+      const av = a[sortKey];
+      const bv = b[sortKey];
+      if (av == null) return 1;
+      if (bv == null) return -1;
+      const cmp = av < bv ? -1 : av > bv ? 1 : 0;
+      return sortDir === "asc" ? cmp : -cmp;
     });
-  }, [data, sort]);
+    return arr;
+  }, [data, sortKey, sortDir]);
 
-  const toggleSort = useCallback((key: string) => {
-    setSort((prev) => ({
-      key,
-      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
-    }));
-  }, []);
-
-  return { sorted, sort, toggleSort };
+  return {
+    sorted,
+    sort: { key: sortKey, direction: sortDir },
+    toggleSort,
+  };
 }

@@ -47,6 +47,8 @@ const statusStyles: Record<string, string> = {
 
 const allBrands = [...new Set(products.map((p) => p.brand))].sort();
 
+type ProductKey = "name" | "brand" | "price" | "stock" | "sales" | "rating" | "status";
+
 export default function AdminProducts() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -77,6 +79,16 @@ export default function AdminProducts() {
     { key: "out", label: "Out of Stock" },
   ];
 
+  const columns: { key: ProductKey; label: string }[] = [
+    { key: "name", label: "Product" },
+    { key: "brand", label: "Brand" },
+    { key: "price", label: "Price" },
+    { key: "stock", label: "Stock" },
+    { key: "sales", label: "Sales" },
+    { key: "rating", label: "Rating" },
+    { key: "status", label: "Status" },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -95,7 +107,7 @@ export default function AdminProducts() {
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-10 w-56 rounded-2xl border-white/5 bg-white/[0.04] pl-9 text-sm placeholder:text-muted/60"
+              className="h-10 w-56 rounded-2xl border-white/5 bg-white/4 pl-9 text-sm placeholder:text-muted/60"
             />
           </div>
           <Button
@@ -159,7 +171,7 @@ export default function AdminProducts() {
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-white/[0.02] p-4"
+          className="flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-white/2 p-4"
         >
           <span className="text-xs font-medium text-muted">Status:</span>
           {filterChips.map((chip) => (
@@ -210,15 +222,7 @@ export default function AdminProducts() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border">
-                    {[
-                      { key: "name", label: "Product" },
-                      { key: "brand", label: "Brand" },
-                      { key: "price", label: "Price" },
-                      { key: "stock", label: "Stock" },
-                      { key: "sales", label: "Sales" },
-                      { key: "rating", label: "Rating" },
-                      { key: "status", label: "Status" },
-                    ].map(({ key, label }) => (
+                    {columns.map(({ key, label }) => (
                       <th
                         key={key}
                         className="cursor-pointer whitespace-nowrap px-6 py-3 text-left text-xs font-medium text-muted transition-colors hover:text-foreground"
@@ -250,11 +254,11 @@ export default function AdminProducts() {
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.02 }}
-                        className="transition-colors hover:bg-white/[0.02]"
+                        className="transition-colors hover:bg-white/2"
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/[0.04]">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/4">
                               <Package className="h-4 w-4 text-muted" />
                             </div>
                             <div>

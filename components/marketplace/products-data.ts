@@ -55,6 +55,31 @@ export function getProductMedia(product: Product): MediaItem[] {
   return media;
 }
 
+/**
+ * Resolve a product by id.
+ * Marketplace catalog clones use `baseId * 10000 + index` — map those back to the base product.
+ */
+export function getProductById(id: number): Product | undefined {
+  const direct = PRODUCTS.find((p) => p.id === id);
+  if (direct) return direct;
+  if (id >= 10000) {
+    const baseId = Math.floor(id / 10000);
+    return PRODUCTS.find((p) => p.id === baseId);
+  }
+  return undefined;
+}
+
+export function getRelatedProducts(
+  product: Product,
+  limit = 4
+): Product[] {
+  return PRODUCTS.filter(
+    (p) =>
+      p.id !== product.id &&
+      (p.brand === product.brand || p.category === product.category)
+  ).slice(0, limit);
+}
+
 const IMG = {
   redNike:
     "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&h=900&fit=crop",

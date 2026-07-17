@@ -110,6 +110,16 @@ export default function AdminOrders() {
     { key: "cancelled", label: "Cancelled" },
   ];
 
+  // Fix: Columns array ko bahar define kiya gaya hai taaki 'as const' syntax error na de
+  const columns = [
+    { key: "id", label: "Order" },
+    { key: "customer", label: "Customer" },
+    { key: "product", label: "Product" },
+    { key: "amount", label: "Amount" },
+    { key: "status", label: "Status" },
+    { key: "date", label: "Date" },
+  ] as const;
+
   return (
     <div className="space-y-6">
       {/* Stats row — reactive to filters */}
@@ -145,7 +155,7 @@ export default function AdminOrders() {
               placeholder="Search orders..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-10 w-56 rounded-2xl border-white/5 bg-white/[0.04] pl-9 text-sm placeholder:text-muted/60"
+              className="h-10 w-56 rounded-2xl border-white/5 bg-white/4 pl-9 text-sm placeholder:text-muted/60"
             />
           </div>
           <Button variant="outline" size="sm" className="gap-1.5" onClick={handleExport}>
@@ -185,14 +195,7 @@ export default function AdminOrders() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border">
-                    {[
-                      { key: "id", label: "Order" },
-                      { key: "customer", label: "Customer" },
-                      { key: "product", label: "Product" },
-                      { key: "amount", label: "Amount" },
-                      { key: "status", label: "Status" },
-                      { key: "date", label: "Date" },
-                    ].map(({ key, label }) => (
+                    {columns.map(({ key, label }) => (
                       <th
                         key={key}
                         className="cursor-pointer whitespace-nowrap px-6 py-3 text-left text-xs font-medium text-muted transition-colors hover:text-foreground"
@@ -221,11 +224,11 @@ export default function AdminOrders() {
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.02 }}
-                        className="transition-colors hover:bg-white/[0.02]"
+                        className="transition-colors hover:bg-white/2"
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.04]">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/4">
                               <ShoppingCart className="h-4 w-4 text-muted" />
                             </div>
                             <span className="text-sm font-medium text-foreground">{order.id}</span>

@@ -1,15 +1,26 @@
 "use client";
 
 import { useState, useMemo, useCallback, useEffect } from "react";
-import { SlidersHorizontal, ChevronDown, Sparkles } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { X } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { TitanSearch } from "@/components/search/titan-search";
-import { AIChatDialog } from "@/features/ai-assistant/ai-chat-dialog";
-import { ProductCard } from "./product-card";
 import { FilterDrawer } from "./filter-drawer";
 import { QuickViewDrawer } from "./quick-view-drawer";
+import {
+  PatternA,
+  PatternB,
+  PatternC,
+  PatternD,
+  ProductSkeleton,
+  LifestyleBreak,
+} from "./bento-patterns";
+import {
+  EditorialBanner,
+  type EditorialBlock,
+} from "./editorial-banner";
 import { MarketplacePagination } from "./marketplace-pagination";
 import {
   PRODUCTS,
@@ -18,33 +29,209 @@ import {
   type Product,
   type Condition,
 } from "./products-data";
-import { cn } from "@/lib/utils";
 
-type QuickId =
-  | "trending"
-  | "nike"
-  | "new-balance"
-  | "vans"
-  | "adidas"
-  | "sale"
-  | "ai-picks";
+/** Products between lifestyle photography breaks */
+const LIFESTYLE_EVERY = 30;
 
-const QUICK_FILTERS: { id: QuickId; label: string }[] = [
-  { id: "trending", label: "Trending" },
-  { id: "nike", label: "Nike" },
-  { id: "new-balance", label: "New Balance" },
-  { id: "vans", label: "Vans" },
-  { id: "adidas", label: "Adidas" },
-  { id: "sale", label: "Sale" },
-  { id: "ai-picks", label: "AI Picks" },
+const EDITORIALS: EditorialBlock[] = [
+  {
+    id: "summer",
+    eyebrow: "Seasonal edit",
+    title: "Summer Collection",
+    subtitle: "Breathable silhouettes and light tones for warmer miles.",
+    cta: "Shop the edit",
+    image:
+      "https://images.unsplash.com/photo-1552346154-21d32810aba3?w=1600&h=900&fit=crop",
+    tone: "dark",
+  },
+  {
+    id: "running",
+    eyebrow: "Performance",
+    title: "Running Essentials",
+    subtitle: "Engineered cushioning and carbon-ready race day tools.",
+    cta: "Explore running",
+    image:
+      "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=1600&h=900&fit=crop",
+    tone: "dark",
+  },
+  {
+    id: "speed",
+    eyebrow: "Designed for",
+    title: "Designed for Speed",
+    subtitle: "Lightweight uppers and responsive plates for faster turns.",
+    cta: "Shop speed",
+    image:
+      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=1600&h=900&fit=crop",
+    tone: "dark",
+  },
+  {
+    id: "new",
+    eyebrow: "Just landed",
+    title: "New Arrivals",
+    subtitle: "Fresh drops from verified stores — authenticated and ready.",
+    cta: "See what's new",
+    image:
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1600&h=900&fit=crop",
+    tone: "dark",
+  },
+  {
+    id: "limited",
+    eyebrow: "Exclusive",
+    title: "Limited Edition",
+    subtitle: "Rare colorways and numbered releases, while they last.",
+    cta: "View limited",
+    image:
+      "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=1600&h=900&fit=crop",
+    tone: "dark",
+  },
 ];
 
+const LIFESTYLE = [
+  {
+    image:
+      "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=900&h=1200&fit=crop",
+    label: "City miles",
+  },
+  {
+    image:
+      "https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=900&h=1200&fit=crop",
+    label: "Weekend rotation",
+  },
+  {
+    image:
+      "https://images.unsplash.com/photo-1539185441755-769473a23570?w=900&h=1200&fit=crop",
+    label: "Track to street",
+  },
+];
+
+type Section =
+  | { type: "pattern-a"; products: Product[]; key: string }
+  | { type: "pattern-b"; products: Product[]; key: string }
+  | { type: "pattern-c"; products: Product[]; key: string; editorial: EditorialBlock }
+  | {
+      type: "pattern-d";
+      products: Product[];
+      key: string;
+      lifestyle?: (typeof LIFESTYLE)[number];
+    }
+  | { type: "promo"; editorial: EditorialBlock; key: string }
+  | {
+      type: "lifestyle";
+      lifestyle: (typeof LIFESTYLE)[number];
+      key: string;
+    };
+
+function take(list: Product[], start: number, n: number) {
+  return list.slice(start, start + n);
+}
+
+/**
+ * Build rotating A→B→C→D sections. Never repeats the same pattern consecutively.
+ * Inserts a full-width lifestyle break every ~25–35 products.
+ */
+function buildSections(products: Product[]): Section[] {
+  const sections: Section[] = [];
+  let i = 0;
+  let cycle = 0;
+  let editorialIdx = 0;
+  let lifestyleIdx = 0;
+  let productsSinceLifestyle = 0;
+  let lastPattern: "a" | "b" | "c" | "d" | null = null;
+  let guard = 0;
+
+  const nextPattern = (): "a" | "b" | "c" | "d" => {
+    const order: Array<"a" | "b" | "c" | "d"> = ["a", "b", "c", "d"];
+    let pick = order[cycle % 4];
+    if (pick === lastPattern) {
+      pick = order[(cycle + 1) % 4];
+      cycle++;
+    }
+    return pick;
+  };
+
+  while (i < products.length && guard < 80) {
+    guard++;
+
+    if (
+      productsSinceLifestyle >= LIFESTYLE_EVERY &&
+      i < products.length
+    ) {
+      const life = LIFESTYLE[lifestyleIdx % LIFESTYLE.length];
+      lifestyleIdx++;
+      sections.push({
+        type: "lifestyle",
+        lifestyle: life,
+        key: `life-${lifestyleIdx}-${i}`,
+      });
+      productsSinceLifestyle = 0;
+    }
+
+    const pattern = nextPattern();
+    lastPattern = pattern;
+
+    if (pattern === "a") {
+      const chunk = take(products, i, 7);
+      if (chunk.length < 3) break;
+      sections.push({
+        type: "pattern-a",
+        products: chunk,
+        key: `a-${cycle}-${chunk[0].id}`,
+      });
+      i += chunk.length;
+      productsSinceLifestyle += chunk.length;
+      const promo = EDITORIALS[editorialIdx % EDITORIALS.length];
+      editorialIdx++;
+      sections.push({
+        type: "promo",
+        editorial: promo,
+        key: `promo-${cycle}-${promo.id}`,
+      });
+    } else if (pattern === "b") {
+      const chunk = take(products, i, 7);
+      if (chunk.length < 3) break;
+      sections.push({
+        type: "pattern-b",
+        products: chunk,
+        key: `b-${cycle}-${chunk[0].id}`,
+      });
+      i += chunk.length;
+      productsSinceLifestyle += chunk.length;
+    } else if (pattern === "c") {
+      const ed = EDITORIALS[editorialIdx % EDITORIALS.length];
+      editorialIdx++;
+      const chunk = take(products, i, 6);
+      if (chunk.length < 4) break;
+      sections.push({
+        type: "pattern-c",
+        products: chunk,
+        key: `c-${cycle}-${chunk[0].id}`,
+        editorial: ed,
+      });
+      i += chunk.length;
+      productsSinceLifestyle += chunk.length;
+    } else {
+      const chunk = take(products, i, 9);
+      if (chunk.length < 5) break;
+      sections.push({
+        type: "pattern-d",
+        products: chunk,
+        key: `d-${cycle}-${chunk[0].id}`,
+        lifestyle: LIFESTYLE[lifestyleIdx % LIFESTYLE.length],
+      });
+      lifestyleIdx++;
+      i += chunk.length;
+      productsSinceLifestyle += chunk.length;
+    }
+
+    cycle++;
+  }
+
+  return sections;
+}
+
 export function MarketplacePage() {
-  const [aiOpen, setAiOpen] = useState(false);
-  const [aiQuery, setAiQuery] = useState<string | undefined>();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [quickFilters, setQuickFilters] = useState<QuickId[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedGenders, setSelectedGenders] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -52,8 +239,8 @@ export function MarketplacePage() {
     []
   );
   const [priceMax, setPriceMax] = useState(500);
-  const [sortBy, setSortBy] = useState("relevance");
   const [page, setPage] = useState(1);
+  const [initialReady, setInitialReady] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(
     null
   );
@@ -68,29 +255,25 @@ export function MarketplacePage() {
     html.style.backgroundColor = "#FAFAFA";
     html.style.colorScheme = "light";
     body.style.backgroundColor = "#FAFAFA";
+    const t = window.setTimeout(() => setInitialReady(true), 180);
     return () => {
+      window.clearTimeout(t);
       html.style.backgroundColor = prevHtml;
       html.style.colorScheme = prevScheme;
       body.style.backgroundColor = prevBody;
     };
   }, []);
 
-  const handleOpenAI = useCallback((query?: string) => {
-    if (query) setAiQuery(query);
-    setAiOpen(true);
-  }, []);
+  const resetPaging = () => setPage(1);
 
-  const handleOpenChange = useCallback((open: boolean) => {
-    setAiOpen(open);
-    if (!open) setAiQuery(undefined);
+  /** All marketplace search stays in the textbox — no AI chat panel */
+  const runSearch = useCallback((query?: string) => {
+    if (typeof query === "string") {
+      setSearchQuery(query);
+    }
+    resetPaging();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
-
-  const toggleQuick = (id: QuickId) => {
-    setQuickFilters((prev) =>
-      prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
-    );
-    setPage(1);
-  };
 
   const filteredProducts = useMemo(() => {
     let list = [...PRODUCTS];
@@ -101,9 +284,11 @@ export function MarketplacePage() {
         (p) =>
           p.name.toLowerCase().includes(q) ||
           p.brand.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q)
+          p.category.toLowerCase().includes(q) ||
+          p.store.toLowerCase().includes(q)
       );
     }
+
     if (selectedBrands.length) {
       list = list.filter((p) => selectedBrands.includes(p.brand));
     }
@@ -118,43 +303,6 @@ export function MarketplacePage() {
     }
     list = list.filter((p) => p.price <= priceMax);
 
-    if (quickFilters.includes("trending")) {
-      list = list.filter((p) => p.trending);
-    }
-    if (quickFilters.includes("nike")) {
-      list = list.filter((p) => p.brand === "Nike");
-    }
-    if (quickFilters.includes("new-balance")) {
-      list = list.filter((p) => p.brand === "New Balance");
-    }
-    if (quickFilters.includes("vans")) {
-      list = list.filter((p) => p.brand === "Vans");
-    }
-    if (quickFilters.includes("adidas")) {
-      list = list.filter((p) => p.brand === "Adidas");
-    }
-    if (quickFilters.includes("sale")) {
-      list = list.filter((p) => p.onSale || p.price < p.originalPrice);
-    }
-    if (quickFilters.includes("ai-picks")) {
-      list = list.filter((p) => p.aiRecommended);
-    }
-
-    switch (sortBy) {
-      case "price-low":
-        list.sort((a, b) => a.price - b.price);
-        break;
-      case "price-high":
-        list.sort((a, b) => b.price - a.price);
-        break;
-      case "rating":
-        list.sort((a, b) => b.rating - a.rating);
-        break;
-      case "newest":
-        list.sort((a, b) => b.id - a.id);
-        break;
-    }
-
     return list;
   }, [
     searchQuery,
@@ -163,26 +311,42 @@ export function MarketplacePage() {
     selectedCategories,
     selectedConditions,
     priceMax,
-    quickFilters,
-    sortBy,
   ]);
 
-  const displayTotal =
-    filteredProducts.length === PRODUCTS.length
-      ? TOTAL_CATALOG_COUNT
-      : Math.max(filteredProducts.length, filteredProducts.length * 18);
+  // Extended catalog for pagination against TOTAL_CATALOG_COUNT
+  const catalog = useMemo(() => {
+    if (!filteredProducts.length) return [];
+    const target =
+      filteredProducts.length === PRODUCTS.length
+        ? TOTAL_CATALOG_COUNT
+        : Math.max(filteredProducts.length, filteredProducts.length * 12);
+    const out: Product[] = [];
+    for (let i = 0; i < target; i++) {
+      const base = filteredProducts[i % filteredProducts.length];
+      out.push({
+        ...base,
+        id: base.id * 10000 + i,
+      });
+    }
+    return out;
+  }, [filteredProducts]);
 
+  const displayTotal = catalog.length;
   const totalPages = Math.max(1, Math.ceil(displayTotal / PAGE_SIZE));
 
   const pageProducts = useMemo(() => {
-    if (filteredProducts.length === 0) return [];
-    const offset = ((page - 1) * PAGE_SIZE) % filteredProducts.length;
-    const out: Product[] = [];
-    for (let i = 0; i < PAGE_SIZE; i++) {
-      out.push(filteredProducts[(offset + i) % filteredProducts.length]);
-    }
-    return out;
-  }, [filteredProducts, page]);
+    const start = (page - 1) * PAGE_SIZE;
+    return catalog.slice(start, start + PAGE_SIZE);
+  }, [catalog, page]);
+
+  const sections = useMemo(
+    () => buildSections(pageProducts),
+    [pageProducts]
+  );
+
+  useEffect(() => {
+    if (page > totalPages) setPage(1);
+  }, [page, totalPages]);
 
   const clearAllFilters = () => {
     setSelectedBrands([]);
@@ -190,256 +354,306 @@ export function MarketplacePage() {
     setSelectedCategories([]);
     setSelectedConditions([]);
     setPriceMax(500);
-    setQuickFilters([]);
     setSearchQuery("");
-    setSortBy("relevance");
-    setPage(1);
+    resetPaging();
   };
 
-  const hasActiveFilters =
+  const drawerFiltersActive =
     selectedBrands.length > 0 ||
     selectedGenders.length > 0 ||
     selectedCategories.length > 0 ||
     selectedConditions.length > 0 ||
-    priceMax !== 500 ||
-    quickFilters.length > 0 ||
-    searchQuery.length > 0;
+    priceMax !== 500;
+
+  const hasActiveFilters = drawerFiltersActive || searchQuery.length > 0;
+
+  const activeFilterChips = useMemo(() => {
+    const chips: { id: string; label: string; onRemove: () => void }[] = [];
+
+    selectedCategories.forEach((c) => {
+      chips.push({
+        id: `cat-${c}`,
+        label: c,
+        onRemove: () => {
+          setSelectedCategories((prev) => prev.filter((x) => x !== c));
+          resetPaging();
+        },
+      });
+    });
+    selectedBrands.forEach((b) => {
+      chips.push({
+        id: `brand-${b}`,
+        label: b,
+        onRemove: () => {
+          setSelectedBrands((prev) => prev.filter((x) => x !== b));
+          resetPaging();
+        },
+      });
+    });
+    selectedGenders.forEach((g) => {
+      chips.push({
+        id: `gender-${g}`,
+        label: g,
+        onRemove: () => {
+          setSelectedGenders((prev) => prev.filter((x) => x !== g));
+          resetPaging();
+        },
+      });
+    });
+    selectedConditions.forEach((c) => {
+      chips.push({
+        id: `cond-${c}`,
+        label: c,
+        onRemove: () => {
+          setSelectedConditions((prev) => prev.filter((x) => x !== c));
+          resetPaging();
+        },
+      });
+    });
+    if (priceMax !== 500) {
+      chips.push({
+        id: "price",
+        label: `Up to $${priceMax}`,
+        onRemove: () => {
+          setPriceMax(500);
+          resetPaging();
+        },
+      });
+    }
+
+    return chips;
+  }, [
+    selectedBrands,
+    selectedGenders,
+    selectedCategories,
+    selectedConditions,
+    priceMax,
+  ]);
 
   const openQuickView = (p: Product) => {
     setQuickViewProduct(p);
     setIsDrawerOpen(true);
   };
 
-  // Editorial rhythm (not masonry):
-  // Row1: feature + 2 standards | Row2: landscape | Row3: 4 standards
-  // Row4: 2 standards + feature | trailing
-  const feature = pageProducts[0];
-  const side = pageProducts.slice(1, 3);
-  const landscape = pageProducts[3];
-  const quartet = pageProducts.slice(4, 8);
-  const mirrorSide = pageProducts.slice(8, 10);
-  const mirrorFeature = pageProducts[10];
-  const trailing = pageProducts.slice(11);
-
   return (
-    <div className="theme-light min-h-screen bg-background text-foreground antialiased selection:bg-primary/15">
-      <Navbar variant="light" offsetTop={0} onOpenAI={() => handleOpenAI()} />
+    <div className="theme-light min-h-screen bg-[#FAFAFA] text-[#111111] antialiased selection:bg-[#2563EB]/15">
+      <Navbar variant="light" offsetTop={0} onOpenAI={() => runSearch()} />
 
       <main>
-        {/* Compact discovery hero (~40% shorter) */}
+        {/* Hero — search + tools + active filter chips */}
         <section className="relative z-50 overflow-visible">
-          <div className="container-page flex flex-col items-center pb-5 pt-20 sm:pb-6 sm:pt-22 lg:pt-24">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-medium text-primary">
-              <Sparkles className="h-3 w-3" />
-              Marketplace
-            </div>
-            <h1 className="text-center text-[28px] font-semibold leading-none tracking-[-0.035em] text-foreground sm:text-[36px]">
+          <div className="container-page flex flex-col items-center pb-7 pt-20 sm:pb-8 sm:pt-24 lg:pt-28">
+            <motion.h1
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="max-w-xl text-center text-[28px] font-semibold leading-[1.1] tracking-[-0.035em] text-[#111111] sm:text-[34px] lg:text-[40px]"
+            >
               Find your next pair
-            </h1>
-            <p className="mt-2 max-w-md text-center text-[14px] text-muted">
-              AI-curated sneakers from verified stores.
-            </p>
-            <div className="relative z-50 mt-5 w-full">
+            </motion.h1>
+
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+              className="relative z-50 mt-6 w-full max-w-xl"
+            >
               <TitanSearch
                 variant="light"
+                compact
                 value={searchQuery}
                 onChange={(v) => {
                   setSearchQuery(v);
-                  setPage(1);
+                  resetPaging();
                 }}
-                onAskAI={handleOpenAI}
-                onSubmit={() => {
-                  const q = searchQuery.trim();
-                  if (q.length > 12) handleOpenAI(q);
+                onAskAI={(q) => {
+                  if (q?.toLowerCase().includes("look like this image")) return;
+                  runSearch(q);
                 }}
+                onSubmit={() => runSearch()}
+                onFilter={() => setFiltersOpen(true)}
+                filterActive={drawerFiltersActive}
+                placeholder="Search sneakers, brands..."
+                aiLabel="Search"
               />
-            </div>
+
+              {activeFilterChips.length > 0 && (
+                <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+                  {activeFilterChips.map((chip) => (
+                    <button
+                      key={chip.id}
+                      type="button"
+                      onClick={chip.onRemove}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-black/[0.08] bg-white py-1 pl-3 pr-2 text-[12px] font-medium text-[#111111] transition-colors hover:border-black/15 hover:bg-[#FAFAFA]"
+                    >
+                      {chip.label}
+                      <span className="flex h-4 w-4 items-center justify-center rounded-full text-[#6B7280] hover:bg-black/[0.06] hover:text-[#111111]">
+                        <X className="h-3 w-3" strokeWidth={2} />
+                      </span>
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedBrands([]);
+                      setSelectedGenders([]);
+                      setSelectedCategories([]);
+                      setSelectedConditions([]);
+                      setPriceMax(500);
+                      resetPaging();
+                    }}
+                    className="px-2 py-1 text-[12px] font-medium text-[#6B7280] transition-colors hover:text-[#111111]"
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              )}
+            </motion.div>
           </div>
         </section>
 
-        {/* Sticky filters — shared chip DNA */}
-        <div className="sticky top-14 z-40 border-b border-border bg-[#FAFAFA]/90 backdrop-blur-2xl">
-          <div className="container-page flex flex-col gap-2.5 py-3 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex flex-wrap items-center gap-1.5">
-              {QUICK_FILTERS.map((f) => {
-                const active = quickFilters.includes(f.id);
-                return (
-                  <button
-                    key={f.id}
-                    type="button"
-                    onClick={() => toggleQuick(f.id)}
-                    className={cn(
-                      "chip",
-                      active ? "chip-active" : "chip-idle"
-                    )}
-                  >
-                    {f.label}
-                  </button>
-                );
-              })}
-              <button
-                type="button"
-                onClick={() => setFiltersOpen(true)}
-                className="chip chip-idle inline-flex items-center gap-1.5"
-              >
-                <SlidersHorizontal className="h-3.5 w-3.5" strokeWidth={1.5} />
-                All filters
-              </button>
-              {hasActiveFilters && (
-                <button
-                  type="button"
-                  onClick={clearAllFilters}
-                  className="px-2 py-1.5 text-[13px] font-medium text-muted transition-colors duration-200 hover:text-foreground"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-
-            <div className="relative">
-              <select
-                value={sortBy}
-                onChange={(e) => {
-                  setSortBy(e.target.value);
-                  setPage(1);
-                }}
-                className="h-9 appearance-none rounded-full border border-border bg-card py-1.5 pl-3.5 pr-8 text-[13px] font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
-                aria-label="Sort by"
-              >
-                <option value="relevance">Sort by</option>
-                <option value="price-low">Price · Low</option>
-                <option value="price-high">Price · High</option>
-                <option value="rating">Rating</option>
-                <option value="newest">Newest</option>
-              </select>
-              <ChevronDown
-                className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted"
-                strokeWidth={1.5}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Editorial grid — 16px gaps, more above the fold */}
-        <section className="py-6 lg:py-8">
+        {/* Product grid */}
+        <section className="pb-20 pt-4 sm:pt-6 lg:pt-8">
           <div className="container-page">
-            {pageProducts.length === 0 ? (
-              <div className="flex flex-col items-center py-20 text-center">
-                <p className="text-xl font-semibold text-foreground">
-                  Nothing matched
-                </p>
-                <p className="mt-2 text-sm text-muted">
-                  Try clearing filters or asking Titan AI.
-                </p>
-                <button
-                  type="button"
-                  onClick={clearAllFilters}
-                  className="mt-6 h-11 rounded-full bg-ink px-5 text-sm font-medium text-white transition-colors duration-200 hover:bg-black"
+            <AnimatePresence mode="wait">
+              {!initialReady ? (
+                <motion.div
+                  key="skeleton"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
                 >
-                  Clear filters
-                </button>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-4">
-                {feature && (
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-[1.25fr_1fr]">
-                    <ProductCard
-                      product={feature}
-                      layout="feature"
-                      priority
-                      onQuickView={openQuickView}
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <ProductSkeleton key={i} aspect="3/4" />
+                  ))}
+                </motion.div>
+              ) : catalog.length === 0 ? (
+                <motion.div
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center py-24 text-center"
+                >
+                  <p className="text-[22px] font-semibold tracking-tight text-[#111111]">
+                    Nothing matched
+                  </p>
+                  <p className="mt-2 text-[15px] text-[#6B7280]">
+                    Try a different brand, model, or clear your search.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={clearAllFilters}
+                    className="mt-8 h-11 rounded-full bg-[#111111] px-6 text-[13px] font-semibold text-white"
+                  >
+                    Clear search
+                  </button>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="catalog"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col gap-12 sm:gap-14 lg:gap-16"
+                >
+                  {sections.map((section) => {
+                    if (section.type === "lifestyle") {
+                      return (
+                        <div key={section.key}>
+                          <LifestyleBreak
+                            image={section.lifestyle.image}
+                            label={section.lifestyle.label}
+                          />
+                        </div>
+                      );
+                    }
+
+                    if (section.type === "promo") {
+                      return (
+                        <div key={section.key}>
+                          <EditorialBanner
+                            block={section.editorial}
+                            variant="full"
+                          />
+                        </div>
+                      );
+                    }
+
+                    if (section.type === "pattern-a") {
+                      return (
+                        <div key={section.key}>
+                          <PatternA
+                            products={section.products}
+                            onQuickView={openQuickView}
+                          />
+                        </div>
+                      );
+                    }
+
+                    if (section.type === "pattern-b") {
+                      return (
+                        <div key={section.key}>
+                          <PatternB
+                            products={section.products}
+                            onQuickView={openQuickView}
+                          />
+                        </div>
+                      );
+                    }
+
+                    if (section.type === "pattern-c") {
+                      return (
+                        <div
+                          key={section.key}
+                          className="space-y-12 sm:space-y-14"
+                        >
+                          <EditorialBanner
+                            block={section.editorial}
+                            variant="split"
+                          />
+                          <PatternC
+                            products={section.products}
+                            onQuickView={openQuickView}
+                          />
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div key={section.key}>
+                        <PatternD
+                          products={section.products}
+                          onQuickView={openQuickView}
+                          lifestyleImage={section.lifestyle?.image}
+                          lifestyleLabel={section.lifestyle?.label}
+                        />
+                      </div>
+                    );
+                  })}
+
+                  <div className="pb-4 pt-4">
+                    <MarketplacePagination
+                      page={page}
+                      totalPages={Math.min(totalPages, 26)}
+                      totalItems={displayTotal}
+                      pageSize={PAGE_SIZE}
+                      onPageChange={(p) => {
+                        setPage(p);
+                        window.scrollTo({ top: 200, behavior: "smooth" });
+                      }}
                     />
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-1">
-                      {side.map((p, i) => (
-                        <ProductCard
-                          key={`s-${page}-${p.id}-${i}`}
-                          product={p}
-                          layout="standard"
-                          priority
-                          onQuickView={openQuickView}
-                        />
-                      ))}
-                    </div>
                   </div>
-                )}
-
-                {landscape && (
-                  <ProductCard
-                    product={landscape}
-                    layout="landscape"
-                    onQuickView={openQuickView}
-                  />
-                )}
-
-                {quartet.length > 0 && (
-                  <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-                    {quartet.map((p, i) => (
-                      <ProductCard
-                        key={`q-${page}-${p.id}-${i}`}
-                        product={p}
-                        layout="standard"
-                        onQuickView={openQuickView}
-                      />
-                    ))}
-                  </div>
-                )}
-
-                {(mirrorFeature || mirrorSide.length > 0) && (
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-[1fr_1.25fr]">
-                    <div className="order-2 grid grid-cols-1 gap-4 sm:grid-cols-2 md:order-1 md:grid-cols-1">
-                      {mirrorSide.map((p, i) => (
-                        <ProductCard
-                          key={`m-${page}-${p.id}-${i}`}
-                          product={p}
-                          layout="standard"
-                          onQuickView={openQuickView}
-                        />
-                      ))}
-                    </div>
-                    {mirrorFeature && (
-                      <ProductCard
-                        product={mirrorFeature}
-                        layout="feature"
-                        className="order-1 md:order-2"
-                        onQuickView={openQuickView}
-                      />
-                    )}
-                  </div>
-                )}
-
-                {trailing.length > 0 && (
-                  <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-                    {trailing.map((p, i) => (
-                      <ProductCard
-                        key={`t-${page}-${p.id}-${i}`}
-                        product={p}
-                        layout="standard"
-                        onQuickView={openQuickView}
-                      />
-                    ))}
-                  </div>
-                )}
-
-                <div className="pb-2 pt-8">
-                  <MarketplacePagination
-                    page={page}
-                    totalPages={Math.min(totalPages, 18)}
-                    totalItems={displayTotal}
-                    pageSize={PAGE_SIZE}
-                    onPageChange={(p) => {
-                      setPage(p);
-                      window.scrollTo({ top: 220, behavior: "smooth" });
-                    }}
-                  />
-                </div>
-              </div>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </section>
       </main>
 
       <Footer />
-      <MobileNav onOpenAI={() => handleOpenAI()} />
+      <MobileNav onOpenAI={() => runSearch()} />
 
       <FilterDrawer
         isOpen={filtersOpen}
@@ -447,27 +661,27 @@ export function MarketplacePage() {
         selectedBrands={selectedBrands}
         setSelectedBrands={(v) => {
           setSelectedBrands(v);
-          setPage(1);
+          resetPaging();
         }}
         selectedGenders={selectedGenders}
         setSelectedGenders={(v) => {
           setSelectedGenders(v);
-          setPage(1);
+          resetPaging();
         }}
         selectedCategories={selectedCategories}
         setSelectedCategories={(v) => {
           setSelectedCategories(v);
-          setPage(1);
+          resetPaging();
         }}
         selectedConditions={selectedConditions}
         setSelectedConditions={(v) => {
           setSelectedConditions(v);
-          setPage(1);
+          resetPaging();
         }}
         priceMax={priceMax}
         setPriceMax={(v) => {
           setPriceMax(v);
-          setPage(1);
+          resetPaging();
         }}
         clearAllFilters={clearAllFilters}
         hasActiveFilters={hasActiveFilters}
@@ -477,12 +691,6 @@ export function MarketplacePage() {
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         product={quickViewProduct}
-      />
-
-      <AIChatDialog
-        open={aiOpen}
-        onOpenChange={handleOpenChange}
-        initialQuery={aiQuery}
       />
     </div>
   );

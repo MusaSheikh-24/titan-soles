@@ -169,7 +169,7 @@ export default function AdminSettings() {
               {Object.entries(settings.toggles).map(([label, isOn]) => (
                 <div
                   key={label}
-                  className="flex items-center justify-between rounded-2xl border border-border bg-white/[0.02] px-4 py-3"
+                  className="flex items-center justify-between rounded-2xl border border-border bg-white/2 px-4 py-3"
                 >
                   <div>
                     <p className="text-sm font-medium text-foreground">{label}</p>

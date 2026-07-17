@@ -95,7 +95,7 @@ export default function AdminMessages() {
               placeholder="Search messages..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-10 rounded-2xl border-white/5 bg-white/[0.04] pl-9 text-sm placeholder:text-muted/60"
+              className="h-10 rounded-2xl border-white/5 bg-white/4 pl-9 text-sm placeholder:text-muted/60"
             />
           </div>
         </div>
@@ -108,8 +108,8 @@ export default function AdminMessages() {
                 key={conv.id}
                 onClick={() => setActiveChat(conv.id)}
                 className={cn(
-                  "flex w-full items-start gap-3 border-b border-border px-4 py-3.5 text-left transition-colors hover:bg-white/[0.02]",
-                  activeChat === conv.id && "bg-white/[0.03]"
+                  "flex w-full items-start gap-3 border-b border-border px-4 py-3.5 text-left transition-colors hover:bg-white/2",
+                  activeChat === conv.id && "bg-white/3"
                 )}
               >
                 <div className="relative shrink-0">
@@ -157,7 +157,7 @@ export default function AdminMessages() {
             <div className="flex-1 space-y-3 overflow-y-auto p-4">
               {messages.map((msg) => (
                 <div key={msg.id} className={cn("flex", msg.isMe ? "justify-end" : "justify-start")}>
-                  <div className={cn("max-w-[80%] rounded-2xl px-4 py-2.5", msg.isMe ? "bg-primary text-primary-foreground" : "bg-white/[0.04] text-foreground")}>
+                  <div className={cn("max-w-[80%] rounded-2xl px-4 py-2.5", msg.isMe ? "bg-primary text-primary-foreground" : "bg-white/4 text-foreground")}>
                     <p className="text-sm">{msg.text}</p>
                     <p className={cn("mt-1 text-[10px]", msg.isMe ? "text-primary-foreground/60" : "text-muted")}>{msg.time}</p>
                   </div>
@@ -178,7 +178,7 @@ export default function AdminMessages() {
                   placeholder="Type a message..."
                   value={messageText}
                   onChange={(e) => setMessageText(e.target.value)}
-                  className="h-10 rounded-2xl border-white/5 bg-white/[0.04] text-sm placeholder:text-muted/60"
+                  className="h-10 rounded-2xl border-white/5 bg-white/4 text-sm placeholder:text-muted/60"
                 />
                 <Button type="submit" size="sm" className="h-10 w-10 rounded-2xl p-0">
                   <Send className="h-4 w-4" />
@@ -189,7 +189,7 @@ export default function AdminMessages() {
         ) : (
           <div className="flex flex-1 items-center justify-center">
             <div className="text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-white/[0.04]">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-white/4">
                 <MessageSquare className="h-7 w-7 text-muted" />
               </div>
               <p className="text-lg font-medium text-foreground">Select a conversation</p>

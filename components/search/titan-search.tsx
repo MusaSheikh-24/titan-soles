@@ -15,7 +15,8 @@ import {
   Sparkles,
   Mic,
   X,
-  Image as ImageIcon,
+  Camera,
+  SlidersHorizontal,
   Clock,
   TrendingUp,
   Tag,
@@ -26,7 +27,7 @@ import {
 import { PRODUCTS } from "@/components/marketplace/products-data";
 import { cn } from "@/lib/utils";
 
-const PLACEHOLDER = "Search sneakers, brands, colors or ask AI...";
+const DEFAULT_PLACEHOLDER = "Ask anything...";
 
 const RECENT_KEY = "titansoles-marketplace-recent";
 const MAX_RECENT = 6;
@@ -46,6 +47,10 @@ const POPULAR_BRANDS = [
 ];
 
 const AI_SUGGESTIONS = [
+  {
+    title: "Jordan under $200 for basketball",
+    description: "Price · sport · verified authentic",
+  },
   {
     title: "Find breathing trail shoes under $160",
     description: "AI will match cushion, grip & climate",
@@ -77,8 +82,14 @@ export type TitanSearchProps = {
   onChange?: (value: string) => void;
   onAskAI: (query?: string) => void;
   onSubmit?: () => void;
+  onFilter?: () => void;
+  filterActive?: boolean;
   className?: string;
   showDropdown?: boolean;
+  placeholder?: string;
+  aiLabel?: string;
+  /** Smaller controls + type for premium marketplace hero */
+  compact?: boolean;
 };
 
 function loadRecent(): string[] {
@@ -112,8 +123,13 @@ export function TitanSearch({
   onChange,
   onAskAI,
   onSubmit,
+  onFilter,
+  filterActive = false,
   className,
   showDropdown: showDropdownProp = true,
+  placeholder = DEFAULT_PLACEHOLDER,
+  aiLabel = "AI",
+  compact = false,
 }: TitanSearchProps) {
   const isControlled = valueProp !== undefined;
   const [localQuery, setLocalQuery] = useState(valueProp ?? "");
@@ -437,7 +453,11 @@ export function TitanSearch({
   return (
     <div
       ref={rootRef}
-      className={cn("relative mx-auto w-full max-w-[800px]", className)}
+      className={cn(
+        "relative mx-auto w-full",
+        compact ? "max-w-[640px]" : "max-w-[800px]",
+        className
+      )}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -449,12 +469,15 @@ export function TitanSearch({
         className="relative"
       >
         <motion.div
-          animate={{ scale: focused ? 1.01 : 1 }}
+          animate={{ scale: focused ? (compact ? 1.005 : 1.01) : 1 }}
           transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
           className={cn(
-            "relative flex h-16 items-center rounded-full",
-            "backdrop-blur-[20px] py-2.5 pl-6 pr-3",
+            "relative flex items-center rounded-full",
+            "backdrop-blur-[20px]",
             "transition-[box-shadow,border-color,background-color] duration-200 ease-out",
+            compact
+              ? "h-12 py-1.5 pl-4 pr-2"
+              : "h-16 py-2.5 pl-6 pr-3",
             isDark
               ? cn(
                   "border border-white/10 bg-white/[0.06] text-white",
@@ -471,18 +494,25 @@ export function TitanSearch({
                   "border bg-[rgba(255,255,255,0.92)]",
                   !focused &&
                     !hovered &&
-                    "border-[rgba(0,0,0,0.05)] shadow-[0_12px_40px_rgba(0,0,0,0.06)]",
+                    (compact
+                      ? "border-[rgba(0,0,0,0.06)] shadow-[0_4px_20px_rgba(0,0,0,0.04)]"
+                      : "border-[rgba(0,0,0,0.05)] shadow-[0_12px_40px_rgba(0,0,0,0.06)]"),
                   !focused &&
                     hovered &&
-                    "border-[rgba(0,0,0,0.06)] shadow-[0_20px_60px_rgba(0,0,0,0.09)]",
+                    (compact
+                      ? "border-[rgba(0,0,0,0.08)] shadow-[0_8px_28px_rgba(0,0,0,0.06)]"
+                      : "border-[rgba(0,0,0,0.06)] shadow-[0_20px_60px_rgba(0,0,0,0.09)]"),
                   focused &&
-                    "border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.98)] shadow-[0_20px_60px_rgba(0,0,0,0.10)]"
+                    (compact
+                      ? "border-[rgba(0,0,0,0.1)] bg-white shadow-[0_8px_28px_rgba(0,0,0,0.07)]"
+                      : "border-[rgba(0,0,0,0.08)] bg-[rgba(255,255,255,0.98)] shadow-[0_20px_60px_rgba(0,0,0,0.10)]")
                 )
           )}
         >
           <Search
             className={cn(
-              "h-4 w-4 shrink-0 transition-colors duration-200",
+              "shrink-0 transition-colors duration-200",
+              compact ? "h-3.5 w-3.5" : "h-4 w-4",
               isDark
                 ? focused
                   ? "text-white"
@@ -495,7 +525,7 @@ export function TitanSearch({
             aria-hidden
           />
 
-          <div className="relative ml-4 min-w-0 flex-1">
+          <div className={cn("relative min-w-0 flex-1", compact ? "ml-3" : "ml-4")}>
             <input
               ref={inputRef}
               type="search"
@@ -522,9 +552,10 @@ export function TitanSearch({
               autoComplete="off"
               spellCheck={false}
               className={cn(
-                "h-11 w-full bg-transparent text-[18px] font-medium tracking-[-0.01em]",
+                "w-full bg-transparent font-medium tracking-[-0.01em]",
                 "placeholder:text-transparent focus:outline-none",
                 "[&::-webkit-search-cancel-button]:hidden",
+                compact ? "h-9 text-[14px]" : "h-11 text-[18px]",
                 isDark
                   ? "text-white caret-white"
                   : "text-[#111111] caret-[#111111]"
@@ -545,16 +576,17 @@ export function TitanSearch({
                 }}
                 transition={{ duration: 0.22, ease: "easeOut" }}
                 className={cn(
-                  "pointer-events-none absolute inset-y-0 left-0 flex items-center text-[18px] font-medium tracking-[-0.01em]",
+                  "pointer-events-none absolute inset-y-0 left-0 flex items-center font-medium tracking-[-0.01em]",
+                  compact ? "text-[14px]" : "text-[18px]",
                   isDark ? "text-slate-500" : "text-[#8A8A8A]"
                 )}
               >
-                {PLACEHOLDER}
+                {placeholder}
               </motion.span>
             )}
           </div>
 
-          <div className="ml-2 flex shrink-0 items-center gap-1.5">
+          <div className={cn("flex shrink-0 items-center", compact ? "ml-1 gap-0.5" : "ml-2 gap-1.5")}>
             <AnimatePresence mode="popLayout">
               {value ? (
                 <motion.button
@@ -569,16 +601,17 @@ export function TitanSearch({
                     inputRef.current?.focus();
                   }}
                   className={cn(
-                    "flex h-9 w-9 items-center justify-center rounded-full transition-all duration-200",
+                    "flex items-center justify-center rounded-full transition-all duration-200",
+                    compact ? "h-8 w-8" : "h-9 w-9",
                     isDark
                       ? "text-slate-400 hover:bg-white/5 hover:text-accent"
                       : "text-[#8A8A8A] hover:bg-black/[0.04] hover:text-[#111111]"
                   )}
                   aria-label="Clear search"
                 >
-                  <X className="h-4 w-4" strokeWidth={1.75} />
+                  <X className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")} strokeWidth={1.75} />
                 </motion.button>
-              ) : mounted ? (
+              ) : mounted && !compact ? (
                 <motion.span
                   key="shortcut"
                   initial={{ opacity: 0 }}
@@ -601,11 +634,13 @@ export function TitanSearch({
               ) : null}
             </AnimatePresence>
 
+            {/* Camera + mic — compact marketplace + full landing */}
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
               className={cn(
-                "flex h-9 w-9 items-center justify-center rounded-full transition-all duration-200 hover:scale-105",
+                "flex items-center justify-center rounded-full transition-all duration-200 hover:scale-105",
+                compact ? "h-8 w-8" : "h-9 w-9",
                 isDark
                   ? "text-slate-400 hover:bg-white/5 hover:text-accent"
                   : "text-[#8A8A8A] hover:bg-black/[0.04] hover:text-[#111111]"
@@ -613,7 +648,10 @@ export function TitanSearch({
               aria-label="Image search"
               title="Search by image"
             >
-              <ImageIcon className="h-4 w-4" strokeWidth={1.75} />
+              <Camera
+                className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")}
+                strokeWidth={1.75}
+              />
             </button>
             <input
               ref={fileRef}
@@ -627,19 +665,22 @@ export function TitanSearch({
               }}
             />
 
-            <div
-              className={cn(
-                "mx-0.5 h-5 w-px",
-                isDark ? "bg-white/10" : "bg-black/[0.08]"
-              )}
-              aria-hidden
-            />
+            {!compact && (
+              <div
+                className={cn(
+                  "mx-0.5 h-5 w-px",
+                  isDark ? "bg-white/10" : "bg-black/[0.08]"
+                )}
+                aria-hidden
+              />
+            )}
 
             <button
               type="button"
               onClick={startVoice}
               className={cn(
-                "relative flex h-9 w-9 items-center justify-center rounded-full transition-all duration-200",
+                "relative flex items-center justify-center rounded-full transition-all duration-200",
+                compact ? "h-8 w-8" : "h-9 w-9",
                 listening
                   ? isDark
                     ? "bg-primary text-white shadow-[0_0_0_4px_rgba(var(--primary),0.2)]"
@@ -659,34 +700,82 @@ export function TitanSearch({
                   )}
                 />
               )}
-              <Mic className="relative h-4 w-4" strokeWidth={1.75} />
+              <Mic
+                className={cn("relative", compact ? "h-3.5 w-3.5" : "h-4 w-4")}
+                strokeWidth={1.75}
+              />
             </button>
+
+            {onFilter && (
+              <button
+                type="button"
+                onClick={onFilter}
+                className={cn(
+                  "relative inline-flex items-center justify-center rounded-full transition-all duration-200",
+                  compact
+                    ? "h-8 gap-1 px-2.5 text-[12px] font-medium"
+                    : "h-9 w-9 hover:scale-105",
+                  filterActive
+                    ? isDark
+                      ? "bg-white/10 text-white"
+                      : "bg-black/[0.06] text-[#111111]"
+                    : isDark
+                      ? "text-slate-400 hover:bg-white/5 hover:text-accent"
+                      : "text-[#6B7280] hover:bg-black/[0.04] hover:text-[#111111]"
+                )}
+                aria-label="Open filters"
+                aria-pressed={filterActive}
+                title="Filters"
+              >
+                <SlidersHorizontal
+                  className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")}
+                  strokeWidth={1.75}
+                />
+                {compact && <span>Filter</span>}
+                {filterActive && (
+                  <span
+                    className={cn(
+                      "rounded-full bg-[#2563EB]",
+                      compact
+                        ? "ml-0.5 h-1.5 w-1.5"
+                        : "absolute right-1.5 top-1.5 h-1.5 w-1.5"
+                    )}
+                  />
+                )}
+              </button>
+            )}
 
             <motion.button
               type="button"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
               transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              onClick={() => commitSearch(value, true)}
+              onClick={() => commitSearch(value, !compact)}
               disabled={loading}
               className={cn(
-                "relative ml-0.5 inline-flex h-[46px] items-center gap-2 overflow-hidden rounded-full",
-                "px-[18px] text-[14px] font-semibold text-white",
+                "relative inline-flex items-center gap-1.5 overflow-hidden rounded-full font-semibold text-white",
                 "transition-shadow duration-200 disabled:opacity-80",
+                compact
+                  ? "ml-0.5 h-9 px-3.5 text-[12px]"
+                  : "ml-0.5 h-[46px] gap-2 px-[18px] text-[14px]",
                 isDark
                   ? cn(
                       "bg-primary shadow-[0_8px_24px_rgba(var(--primary),0.35),0_0_0_1px_rgba(255,255,255,0.08)_inset]",
                       "hover:shadow-[0_12px_32px_rgba(var(--primary),0.45),0_0_24px_rgba(var(--primary),0.3)]"
                     )
                   : cn(
-                      "bg-[#111111] shadow-[0_8px_24px_rgba(0,0,0,0.18),0_0_0_1px_rgba(255,255,255,0.06)_inset]",
-                      "hover:shadow-[0_12px_32px_rgba(0,0,0,0.24),0_0_24px_rgba(17,17,17,0.18)]"
+                      "bg-[#111111]",
+                      compact
+                        ? "shadow-[0_4px_14px_rgba(0,0,0,0.14)] hover:shadow-[0_6px_18px_rgba(0,0,0,0.18)]"
+                        : "shadow-[0_8px_24px_rgba(0,0,0,0.18),0_0_0_1px_rgba(255,255,255,0.06)_inset] hover:shadow-[0_12px_32px_rgba(0,0,0,0.24),0_0_24px_rgba(17,17,17,0.18)]"
                     )
               )}
-              aria-label="Ask AI"
+              aria-label={aiLabel}
             >
               {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} />
+                <Loader2 className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4", "animate-spin")} strokeWidth={2} />
+              ) : compact ? (
+                <Search className="h-3.5 w-3.5" strokeWidth={2} />
               ) : (
                 <motion.span
                   animate={{ rotate: [0, 12, -8, 0], scale: [1, 1.08, 1] }}
@@ -700,7 +789,7 @@ export function TitanSearch({
                   <Sparkles className="h-3.5 w-3.5" strokeWidth={2} />
                 </motion.span>
               )}
-              <span>AI</span>
+              <span>{aiLabel}</span>
             </motion.button>
           </div>
         </motion.div>
