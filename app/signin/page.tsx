@@ -15,14 +15,21 @@ import {
     Shield,
     Zap,
     Star,
+    ShoppingBag,
+    Store,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 
 export default function SignInPage() {
+    const router = useRouter();
+    const { login } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
+    const [role, setRole] = useState<"buyer" | "seller">("buyer");
     const [isLoading, setIsLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
@@ -54,8 +61,9 @@ export default function SignInPage() {
         e.preventDefault();
         if (validateForm()) {
             setIsLoading(true);
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await login(email, password, role);
             setIsLoading(false);
+            router.push(role === "seller" ? "/become-seller" : "/");
         }
     };
 
@@ -232,6 +240,74 @@ export default function SignInPage() {
                         <p className="mt-1 text-sm text-gray-500">
                             Sign in to continue your journey.
                         </p>
+                    </motion.div>
+
+                    {/* Account Type Selector */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="mb-4"
+                    >
+                        <label className="block text-xs font-semibold text-gray-700 mb-2">
+                            Sign in as a
+                        </label>
+                        <div className="grid grid-cols-2 gap-2.5">
+                            <button
+                                type="button"
+                                onClick={() => setRole("buyer")}
+                                className={`flex items-center gap-2.5 px-3.5 py-3 rounded-lg border-2 transition-all cursor-pointer ${
+                                    role === "buyer"
+                                        ? "border-blue-500 bg-blue-50/50"
+                                        : "border-gray-200 bg-white hover:border-gray-300"
+                                }`}
+                            >
+                                <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                                    role === "buyer"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-gray-100 text-gray-400"
+                                }`}>
+                                    <ShoppingBag className="w-4 h-4" />
+                                </div>
+                                <div className="text-left">
+                                    <p className={`text-xs font-semibold ${
+                                        role === "buyer" ? "text-blue-600" : "text-gray-900"
+                                    }`}>
+                                        Buyer
+                                    </p>
+                                    <p className="text-[10px] text-gray-400 leading-tight">
+                                        Shop & discover
+                                    </p>
+                                </div>
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setRole("seller")}
+                                className={`flex items-center gap-2.5 px-3.5 py-3 rounded-lg border-2 transition-all cursor-pointer ${
+                                    role === "seller"
+                                        ? "border-blue-500 bg-blue-50/50"
+                                        : "border-gray-200 bg-white hover:border-gray-300"
+                                }`}
+                            >
+                                <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                                    role === "seller"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-gray-100 text-gray-400"
+                                }`}>
+                                    <Store className="w-4 h-4" />
+                                </div>
+                                <div className="text-left">
+                                    <p className={`text-xs font-semibold ${
+                                        role === "seller" ? "text-blue-600" : "text-gray-900"
+                                    }`}>
+                                        Seller
+                                    </p>
+                                    <p className="text-[10px] text-gray-400 leading-tight">
+                                        List & sell products
+                                    </p>
+                                </div>
+                            </button>
+                        </div>
                     </motion.div>
 
                     {/* Form */}

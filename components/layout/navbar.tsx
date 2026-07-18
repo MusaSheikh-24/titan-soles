@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Menu, X, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Menu, X, Sparkles, User, LogOut, LayoutDashboard } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { NAV_LINKS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth-context";
 
 interface NavbarProps {
   onOpenAI: () => void;
@@ -16,8 +18,12 @@ interface NavbarProps {
 }
 
 export function Navbar({ onOpenAI, variant = "dark", offsetTop }: NavbarProps) {
+  const { user, logout, isSeller } = useAuth();
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
   const isLight = variant === "light";
   const top = offsetTop ?? (isLight ? 32 : 48);
 
@@ -26,6 +32,22 @@ export function Navbar({ onOpenAI, variant = "dark", offsetTop }: NavbarProps) {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    setProfileOpen(false);
+    router.push("/");
+  };
 
   return (
     <header
@@ -86,22 +108,76 @@ export function Navbar({ onOpenAI, variant = "dark", offsetTop }: NavbarProps) {
           >
             <Link href="/become-seller">Sell</Link>
           </Button>
-          <Button
-            variant={isLight ? "outline" : "dark"}
-            size="sm"
-            asChild
-            className={isLight ? "border-neutral-200 bg-white text-neutral-900 shadow-sm hover:bg-neutral-50" : undefined}
-          >
-            <Link href="/signin">Sign In</Link>
-          </Button>
-          <Button
-            variant={isLight ? "default" : "accent"}
-            size="sm"
-            asChild
-            className={isLight ? "shadow-sm shadow-blue-600/20" : undefined}
-          >
-            <Link href="/signup">Sign Up</Link>
-          </Button>
+          {user ? (
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className={cn(
+                  "flex h-8 w-8 items-center justify-center rounded-full transition-colors",
+                  isLight
+                    ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                    : "bg-white/10 text-white hover:bg-white/20"
+                )}
+              >
+                <User className="h-4 w-4" />
+              </button>
+              {profileOpen && (
+                <div
+                  className={cn(
+                    "absolute right-0 top-full mt-2 w-44 rounded-xl border shadow-xl z-50 overflow-hidden",
+                    isLight
+                      ? "border-neutral-200 bg-white shadow-neutral-200/20"
+                      : "border-white/10 bg-[#0D1B2A] shadow-black/30"
+                  )}
+                >
+                  <Link
+                    href={isSeller ? "/seller" : "/admin"}
+                    onClick={() => setProfileOpen(false)}
+                    className={cn(
+                      "flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-medium transition-colors",
+                      isLight
+                        ? "text-neutral-700 hover:bg-neutral-100"
+                        : "text-slate-300 hover:bg-white/8 hover:text-white"
+                    )}
+                  >
+                    <LayoutDashboard className="h-4 w-4" />
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className={cn(
+                      "flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm font-medium transition-colors border-t",
+                      isLight
+                        ? "text-red-600 hover:bg-red-50 border-neutral-100"
+                        : "text-red-400 hover:bg-white/8 border-white/8"
+                    )}
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <Button
+                variant={isLight ? "outline" : "dark"}
+                size="sm"
+                asChild
+                className={isLight ? "border-neutral-200 bg-white text-neutral-900 shadow-sm hover:bg-neutral-50" : undefined}
+              >
+                <Link href="/signin">Sign In</Link>
+              </Button>
+              <Button
+                variant={isLight ? "default" : "accent"}
+                size="sm"
+                asChild
+                className={isLight ? "shadow-sm shadow-blue-600/20" : undefined}
+              >
+                <Link href="/signup">Sign Up</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         <button
@@ -163,12 +239,40 @@ export function Navbar({ onOpenAI, variant = "dark", offsetTop }: NavbarProps) {
               <Button variant="secondary" asChild>
                 <Link href="/become-seller">Become Seller</Link>
               </Button>
-              <Button variant={isLight ? "outline" : "dark"} asChild>
-                <Link href="/signin">Sign In</Link>
-              </Button>
-              <Button variant={isLight ? "default" : "accent"} asChild>
-                <Link href="/signup">Sign Up</Link>
-              </Button>
+              {user ? (
+                <>
+                  <Button variant="secondary" asChild>
+                    <Link href={isSeller ? "/seller" : "/admin"} onClick={() => setMobileOpen(false)}>
+                      <LayoutDashboard className="h-4 w-4" />
+                      Dashboard
+                    </Link>
+                  </Button>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setMobileOpen(false);
+                    }}
+                    className={cn(
+                      "flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors",
+                      isLight
+                        ? "text-red-600 hover:bg-red-50"
+                        : "text-red-400 hover:bg-white/8"
+                    )}
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Button variant={isLight ? "outline" : "dark"} asChild>
+                    <Link href="/signin" onClick={() => setMobileOpen(false)}>Sign In</Link>
+                  </Button>
+                  <Button variant={isLight ? "default" : "accent"} asChild>
+                    <Link href="/signup" onClick={() => setMobileOpen(false)}>Sign Up</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
