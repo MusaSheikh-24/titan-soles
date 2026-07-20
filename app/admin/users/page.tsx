@@ -19,15 +19,15 @@ import { cn } from "@/lib/utils";
 import { useTableSort } from "@/lib/use-table-sort";
 
 const users = [
-  { id: "USR-001", name: "Sarah Johnson", email: "sarah.j@email.com", role: "buyer", orders: 12, spent: 1840, joined: "2026-01-15", status: "active" },
+  { id: "USR-001", name: "Sarah Johnson", email: "sarah.j@email.com", role: "user", orders: 12, spent: 1840, joined: "2026-01-15", status: "active" },
   { id: "USR-002", name: "Mike Chen", email: "mike.chen@email.com", role: "seller", orders: 0, spent: 0, joined: "2026-02-20", status: "active", store: "Premium Kicks" },
-  { id: "USR-003", name: "Emily Rodriguez", email: "emily.r@email.com", role: "buyer", orders: 8, spent: 920, joined: "2026-03-05", status: "active" },
+  { id: "USR-003", name: "Emily Rodriguez", email: "emily.r@email.com", role: "user", orders: 8, spent: 920, joined: "2026-03-05", status: "active" },
   { id: "USR-004", name: "Alex Thompson", email: "alex.t@email.com", role: "seller", orders: 0, spent: 0, joined: "2026-01-10", status: "active", store: "Sneaker Vault" },
-  { id: "USR-005", name: "Jessica Park", email: "jessica.p@email.com", role: "buyer", orders: 24, spent: 3450, joined: "2025-11-08", status: "active" },
+  { id: "USR-005", name: "Jessica Park", email: "jessica.p@email.com", role: "user", orders: 24, spent: 3450, joined: "2025-11-08", status: "active" },
   { id: "USR-006", name: "David Kim", email: "david.k@email.com", role: "admin", orders: 0, spent: 0, joined: "2025-10-01", status: "active" },
-  { id: "USR-007", name: "Lisa Wang", email: "lisa.w@email.com", role: "buyer", orders: 3, spent: 375, joined: "2026-05-12", status: "suspended" },
+  { id: "USR-007", name: "Lisa Wang", email: "lisa.w@email.com", role: "user", orders: 3, spent: 375, joined: "2026-05-12", status: "suspended" },
   { id: "USR-008", name: "James Wilson", email: "james.w@email.com", role: "seller", orders: 0, spent: 0, joined: "2026-04-01", status: "active", store: "Urban Footwear" },
-  { id: "USR-009", name: "Olivia Brown", email: "olivia.b@email.com", role: "buyer", orders: 7, spent: 1105, joined: "2026-02-28", status: "active" },
+  { id: "USR-009", name: "Olivia Brown", email: "olivia.b@email.com", role: "user", orders: 7, spent: 1105, joined: "2026-02-28", status: "active" },
   { id: "USR-010", name: "Ryan Taylor", email: "ryan.t@email.com", role: "seller", orders: 0, spent: 0, joined: "2026-03-15", status: "pending", store: "Velocity Sneakers" },
 ];
 

@@ -284,22 +284,25 @@ export function ProductCard({
           )}
         >
           <div className="flex gap-2">
-            <Link
-              href={`/product/${product.id}`}
-              onClick={(e) => e.stopPropagation()}
-              className="relative flex h-10 flex-1 items-center justify-center overflow-hidden rounded-full border border-white/40 bg-white/95 text-[13px] font-semibold text-[#111111] shadow-[0_4px_16px_rgba(0,0,0,0.12)] backdrop-blur-md transition-transform duration-200 hover:bg-white active:scale-[0.98]"
-            >
-              Detail
-            </Link>
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onQuickView(product);
               }}
-              className="relative flex h-10 flex-1 items-center justify-center overflow-hidden rounded-full bg-[#111111] text-[13px] font-semibold text-white shadow-[0_4px_16px_rgba(0,0,0,0.2)] transition-transform duration-200 hover:bg-black active:scale-[0.98] before:absolute before:inset-0 before:bg-white/0 before:transition-colors hover:before:bg-white/[0.06]"
+              className="relative flex h-10 flex-1 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-white/40 bg-white/95 text-[13px] font-semibold text-[#111111] shadow-[0_4px_16px_rgba(0,0,0,0.12)] backdrop-blur-md transition-transform duration-200 hover:bg-white active:scale-[0.98]"
             >
-              Quick Add
+              Quick View
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                // TODO: implement request to seller
+              }}
+              className="relative flex h-10 flex-1 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-[#111111] text-[13px] font-semibold text-white shadow-[0_4px_16px_rgba(0,0,0,0.2)] transition-transform duration-200 hover:bg-black active:scale-[0.98] before:absolute before:inset-0 before:bg-white/0 before:transition-colors hover:before:bg-white/[0.06]"
+            >
+              Request a Seller
             </button>
           </div>
         </div>

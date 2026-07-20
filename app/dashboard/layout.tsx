@@ -1,30 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import { SellerSidebar } from "@/components/seller/seller-sidebar";
+import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { AIChatDialog } from "@/features/ai-assistant/ai-chat-dialog";
 import { usePathname } from "next/navigation";
 
 const pageTitles: Record<string, string> = {
-  "/seller": "Dashboard",
-  "/seller/products": "My Products",
-  "/seller/orders": "Orders",
-  "/seller/analytics": "Analytics",
-  "/seller/settings": "Settings",
+  "/dashboard": "Dashboard",
+  "/dashboard/profile": "My Profile",
+  "/dashboard/wishlist": "Wishlist",
+  "/dashboard/requests": "My Requests",
+  "/dashboard/request-history": "Request History",
+  "/dashboard/notifications": "Notifications",
+  "/dashboard/settings": "Settings",
+  "/dashboard/help": "Help & Support",
 };
 
-export default function SellerLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
   const pathname = usePathname();
 
-  const title = pageTitles[pathname] ?? "Seller";
+  const title = pageTitles[pathname] ?? "Dashboard";
 
   return (
     <div className="flex h-screen bg-background">
-      <SellerSidebar
+      <DashboardSidebar
         collapsed={collapsed}
         onToggle={() => setCollapsed(!collapsed)}
         mobileOpen={mobileOpen}

@@ -131,7 +131,7 @@ export function Navbar({ onOpenAI, variant = "dark", offsetTop }: NavbarProps) {
                   )}
                 >
                   <Link
-                    href={isSeller ? "/seller" : "/admin"}
+                    href={isSeller ? "/seller" : "/dashboard"}
                     onClick={() => setProfileOpen(false)}
                     className={cn(
                       "flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-medium transition-colors",
@@ -242,7 +242,7 @@ export function Navbar({ onOpenAI, variant = "dark", offsetTop }: NavbarProps) {
               {user ? (
                 <>
                   <Button variant="secondary" asChild>
-                    <Link href={isSeller ? "/seller" : "/admin"} onClick={() => setMobileOpen(false)}>
+                    <Link href={isSeller ? "/seller" : "/dashboard"} onClick={() => setMobileOpen(false)}>
                       <LayoutDashboard className="h-4 w-4" />
                       Dashboard
                     </Link>

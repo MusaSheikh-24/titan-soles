@@ -23,7 +23,7 @@ interface AuthContextType {
   updateUserRole: (role: UserRole) => void;
   logout: () => void;
   isSeller: boolean;
-  isBuyer: boolean;
+  isUser: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         updateUserRole,
         logout,
         isSeller: user?.role === "seller",
-        isBuyer: user?.role === "buyer",
+        isUser: user?.role === "user",
       }}
     >
       {children}

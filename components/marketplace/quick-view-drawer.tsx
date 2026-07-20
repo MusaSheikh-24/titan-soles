@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   X,
   Heart,
-  ShoppingBag,
   ShieldCheck,
   Sparkles,
   Play,
@@ -304,10 +303,9 @@ export function QuickViewDrawer({
               <div className="flex gap-3">
                 <button
                   type="button"
-                  className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-full bg-[#111111] text-[14px] font-medium text-white transition-all duration-[250ms] hover:bg-black active:scale-[0.98]"
+                  className="inline-flex h-14 flex-1 cursor-pointer items-center justify-center gap-2 rounded-full bg-[#111111] text-[14px] font-medium text-white transition-all duration-[250ms] hover:bg-black active:scale-[0.98]"
                 >
-                  <ShoppingBag className="h-4 w-4" strokeWidth={1.5} />
-                  Add to bag
+                  Request a Seller
                 </button>
                 <button
                   type="button"

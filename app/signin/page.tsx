@@ -7,6 +7,7 @@ import {
     EyeOff,
     Mail,
     Lock,
+    User,
     ArrowLeft,
     ArrowRight,
     CheckCircle2,
@@ -29,7 +30,7 @@ export default function SignInPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
-    const [role, setRole] = useState<"buyer" | "seller">("buyer");
+    const [role, setRole] = useState<"user" | "seller">("user");
     const [isLoading, setIsLoading] = useState(false);
     const [focusedField, setFocusedField] = useState<string | null>(null);
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
@@ -255,28 +256,28 @@ export default function SignInPage() {
                         <div className="grid grid-cols-2 gap-2.5">
                             <button
                                 type="button"
-                                onClick={() => setRole("buyer")}
+                                onClick={() => setRole("user")}
                                 className={`flex items-center gap-2.5 px-3.5 py-3 rounded-lg border-2 transition-all cursor-pointer ${
-                                    role === "buyer"
+                                    role === "user"
                                         ? "border-blue-500 bg-blue-50/50"
                                         : "border-gray-200 bg-white hover:border-gray-300"
                                 }`}
                             >
                                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-                                    role === "buyer"
+                                    role === "user"
                                         ? "bg-blue-600 text-white"
                                         : "bg-gray-100 text-gray-400"
                                 }`}>
-                                    <ShoppingBag className="w-4 h-4" />
+                                    <User className="w-4 h-4" />
                                 </div>
                                 <div className="text-left">
                                     <p className={`text-xs font-semibold ${
-                                        role === "buyer" ? "text-blue-600" : "text-gray-900"
+                                        role === "user" ? "text-blue-600" : "text-gray-900"
                                     }`}>
-                                        Buyer
+                                        User
                                     </p>
                                     <p className="text-[10px] text-gray-400 leading-tight">
-                                        Shop & discover
+                                        Browse & discover
                                     </p>
                                 </div>
                             </button>

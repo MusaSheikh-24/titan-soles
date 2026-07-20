@@ -7,12 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
   Search,
   ShoppingCart,
   Clock,
@@ -20,7 +14,9 @@ import {
   XCircle,
   Truck,
   ArrowUpDown,
+  Filter,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Order {
   id: string;
@@ -46,19 +42,11 @@ const initialOrders: Order[] = [
 ];
 
 const statusStyles: Record<string, string> = {
-  pending: "bg-warning/10 text-warning border-warning/20",
-  processing: "bg-accent/10 text-accent border-accent/20",
-  shipped: "bg-primary/10 text-primary border-primary/20",
-  completed: "bg-success/10 text-success border-success/20",
-  cancelled: "bg-danger/10 text-danger border-danger/20",
-};
-
-const statusIcons: Record<string, React.ReactNode> = {
-  pending: <Clock className="h-3 w-3" />,
-  processing: <Clock className="h-3 w-3" />,
-  shipped: <Truck className="h-3 w-3" />,
-  completed: <CheckCircle2 className="h-3 w-3" />,
-  cancelled: <XCircle className="h-3 w-3" />,
+  pending: "bg-amber-50 text-amber-700 border-amber-200",
+  processing: "bg-blue-50 text-blue-700 border-blue-200",
+  shipped: "bg-purple-50 text-purple-700 border-purple-200",
+  completed: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  cancelled: "bg-red-50 text-red-700 border-red-200",
 };
 
 const nextStatus: Record<string, string> = {
@@ -117,45 +105,43 @@ export default function SellerOrders() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-section text-foreground">Orders</h2>
-          <p className="mt-1 text-muted">Manage and track your customer orders.</p>
-        </div>
+      <div className="space-y-1">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Orders</h1>
+        <p className="text-sm text-gray-500">Manage and track your customer orders.</p>
       </div>
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card>
+        <Card className="shadow-sm border-gray-200 rounded-xl">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-warning/10">
-              <Clock className="h-5 w-5 text-warning" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50">
+              <Clock className="h-5 w-5 text-amber-600" />
             </div>
             <div>
-              <p className="text-xs text-muted">Pending</p>
-              <p className="text-lg font-semibold text-foreground">{pendingCount}</p>
+              <p className="text-xs text-gray-500">Pending</p>
+              <p className="text-lg font-semibold text-gray-900">{pendingCount}</p>
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="shadow-sm border-gray-200 rounded-xl">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent/10">
-              <Clock className="h-5 w-5 text-accent" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50">
+              <Clock className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <p className="text-xs text-muted">Processing</p>
-              <p className="text-lg font-semibold text-foreground">{processingCount}</p>
+              <p className="text-xs text-gray-500">Processing</p>
+              <p className="text-lg font-semibold text-gray-900">{processingCount}</p>
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="shadow-sm border-gray-200 rounded-xl">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10">
-              <Truck className="h-5 w-5 text-primary" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50">
+              <Truck className="h-5 w-5 text-purple-600" />
             </div>
             <div>
-              <p className="text-xs text-muted">Shipped</p>
-              <p className="text-lg font-semibold text-foreground">{shippedCount}</p>
+              <p className="text-xs text-gray-500">Shipped</p>
+              <p className="text-lg font-semibold text-gray-900">{shippedCount}</p>
             </div>
           </CardContent>
         </Card>
@@ -164,24 +150,26 @@ export default function SellerOrders() {
       {/* Search + Filters */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative max-w-sm flex-1">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
             placeholder="Search orders..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-10 rounded-2xl border-white/5 bg-white/[0.04] pl-9 text-sm placeholder:text-muted/60"
+            className="h-10 pl-10 border-gray-200 bg-white rounded-xl focus:ring-blue-500/20"
           />
         </div>
         <div className="flex items-center gap-2 flex-wrap">
+          <Filter className="h-3.5 w-3.5 text-gray-400 mr-0.5" />
           {filters.map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-colors ${
+              className={cn(
+                "cursor-pointer rounded-full px-4 py-1.5 text-xs font-medium transition-all",
                 filter === f
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-white/[0.04] text-muted hover:text-foreground hover:bg-white/[0.06]"
-              }`}
+                  ? "bg-blue-600 text-white shadow-sm shadow-blue-600/20"
+                  : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:text-gray-900 hover:bg-gray-50"
+              )}
             >
               {f === "all" ? "All" : f.replace("_", " ")}
             </button>
@@ -190,12 +178,12 @@ export default function SellerOrders() {
       </div>
 
       {/* Table */}
-      <Card>
+      <Card className="shadow-sm border-gray-200 rounded-2xl overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-border">
+                <tr className="border-b border-gray-100 bg-gray-50/50">
                   {[
                     { key: "id", label: "Order" },
                     { key: "customer", label: "Customer" },
@@ -207,7 +195,7 @@ export default function SellerOrders() {
                     <th
                       key={col.key}
                       onClick={() => toggleSort(col.key)}
-                      className="px-6 py-3 text-left text-xs font-medium text-muted uppercase tracking-wider cursor-pointer hover:text-foreground transition-colors"
+                      className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-900 transition-colors"
                     >
                       <div className="flex items-center gap-1">
                         {col.label}
@@ -215,40 +203,39 @@ export default function SellerOrders() {
                       </div>
                     </th>
                   ))}
-                  <th className="px-6 py-3 text-right text-xs font-medium text-muted uppercase tracking-wider">Action</th>
+                  <th className="px-6 py-3.5 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-gray-100">
                 {filtered.map((order, i) => (
                   <motion.tr
                     key={order.id}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.03 }}
-                    className="transition-colors hover:bg-white/[0.02]"
+                    className="transition-colors hover:bg-gray-50"
                   >
-                    <td className="px-6 py-3.5 text-sm font-medium text-foreground">{order.id}</td>
+                    <td className="px-6 py-3.5 text-sm font-semibold text-gray-900">{order.id}</td>
                     <td className="px-6 py-3.5">
                       <div>
-                        <p className="text-sm text-foreground">{order.customer}</p>
-                        <p className="text-xs text-muted">{order.email}</p>
+                        <p className="text-sm font-medium text-gray-900">{order.customer}</p>
+                        <p className="text-xs text-gray-500">{order.email}</p>
                       </div>
                     </td>
-                    <td className="px-6 py-3.5 text-sm text-muted">{order.product}</td>
-                    <td className="px-6 py-3.5 text-sm text-foreground">{order.amount}</td>
+                    <td className="px-6 py-3.5 text-sm text-gray-500">{order.product}</td>
+                    <td className="px-6 py-3.5 text-sm font-medium text-gray-900">{order.amount}</td>
                     <td className="px-6 py-3.5">
-                      <Badge variant="outline" className={`flex items-center gap-1 border px-2 py-0.5 text-[11px] w-fit ${statusStyles[order.status]}`}>
-                        {statusIcons[order.status]}
+                      <Badge variant="outline" className={`border px-2.5 py-0.5 text-[10px] font-medium rounded-lg w-fit ${statusStyles[order.status]}`}>
                         {order.status}
                       </Badge>
                     </td>
-                    <td className="px-6 py-3.5 text-sm text-muted">{order.date}</td>
+                    <td className="px-6 py-3.5 text-sm text-gray-500">{order.date}</td>
                     <td className="px-6 py-3.5 text-right">
                       {order.status !== "completed" && order.status !== "cancelled" && nextStatus[order.status] && (
                         <Button
                           variant="outline"
                           size="sm"
-                          className="text-xs"
+                          className="text-xs rounded-xl border-gray-200 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                           onClick={() => updateStatus(order.id)}
                         >
                           Mark as {nextStatus[order.status]}
@@ -259,7 +246,7 @@ export default function SellerOrders() {
                 ))}
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-sm text-muted">
+                    <td colSpan={7} className="px-6 py-12 text-center text-sm text-gray-500">
                       No orders found.
                     </td>
                   </tr>
