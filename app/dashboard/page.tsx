@@ -86,7 +86,7 @@ export default function UserDashboard() {
       <div className="grid gap-6 lg:grid-cols-3">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="lg:col-span-2">
           <Card className="shadow-sm border-gray-200 rounded-2xl overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-gray-50/80 to-white border-b border-gray-100">
+            <CardHeader className="flex flex-row items-center justify-between bg-linear-to-r from-gray-50/80 to-white border-b border-gray-100">
               <CardTitle className="text-base font-semibold text-gray-900 flex items-center gap-2">
                 <MessageSquare className="h-4 w-4 text-blue-600" />
                 Recent Requests
@@ -102,7 +102,7 @@ export default function UserDashboard() {
                 {recentRequests.map((req) => (
                   <div key={req.id} className="flex items-center justify-between px-6 py-3.5 transition-colors hover:bg-gray-50 group">
                     <div className="flex items-center gap-4">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 text-xs font-semibold text-gray-600 group-hover:from-blue-50 group-hover:to-blue-100 group-hover:text-blue-600 transition-all">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-gray-100 to-gray-200 text-xs font-semibold text-gray-600 group-hover:from-blue-50 group-hover:to-blue-100 group-hover:text-blue-600 transition-all">
                         {req.id.slice(-4)}
                       </div>
                       <div>
@@ -125,7 +125,7 @@ export default function UserDashboard() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <Card className="h-full shadow-sm border-gray-200 rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-gray-50/80 to-white border-b border-gray-100">
+            <CardHeader className="bg-linear-to-r from-gray-50/80 to-white border-b border-gray-100">
               <CardTitle className="text-base font-semibold text-gray-900 flex items-center gap-2">
                 <LayoutGrid className="h-4 w-4 text-blue-600" />
                 Quick Actions
@@ -165,7 +165,7 @@ export default function UserDashboard() {
       <div className="grid gap-6 lg:grid-cols-2">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
           <Card className="shadow-sm border-gray-200 rounded-2xl overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-gray-50/80 to-white border-b border-gray-100">
+            <CardHeader className="flex flex-row items-center justify-between bg-linear-to-r from-gray-50/80 to-white border-b border-gray-100">
               <CardTitle className="text-base font-semibold text-gray-900 flex items-center gap-2">
                 <Heart className="h-4 w-4 text-rose-500" />
                 Wishlist
@@ -189,9 +189,8 @@ export default function UserDashboard() {
                         <p className="text-xs text-gray-500 mt-0.5">{item.store} · {item.price}</p>
                       </div>
                     </div>
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-lg ${
-                      item.inStock ? "bg-emerald-50 text-emerald-700" : "bg-gray-50 text-gray-500"
-                    }`}>
+                    <span className={`text-xs font-medium px-2.5 py-1 rounded-lg ${item.inStock ? "bg-emerald-50 text-emerald-700" : "bg-gray-50 text-gray-500"
+                      }`}>
                       {item.inStock ? "In Stock" : "Out of Stock"}
                     </span>
                   </div>
@@ -203,14 +202,14 @@ export default function UserDashboard() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
           <Card className="h-full shadow-sm border-gray-200 rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-gray-50/80 to-white border-b border-gray-100">
+            <CardHeader className="bg-linear-to-r from-gray-50/80 to-white border-b border-gray-100">
               <CardTitle className="text-base font-semibold text-gray-900 flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-amber-500" />
                 Tips & Insights
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3.5 p-5">
-              <div className="rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-200/50 p-4 transition-all hover:shadow-sm hover:border-blue-300/50">
+              <div className="rounded-xl bg-linear-to-br from-blue-50 to-blue-100/50 border border-blue-200/50 p-4 transition-all hover:shadow-sm hover:border-blue-300/50">
                 <div className="flex items-center gap-2.5 mb-1.5">
                   <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-500/10">
                     <Sparkles className="h-3.5 w-3.5 text-blue-600" />
@@ -221,7 +220,7 @@ export default function UserDashboard() {
                   Use Titan AI to find sneakers that match your style. Our AI analyzes trends and preferences to recommend the perfect pair.
                 </p>
               </div>
-              <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-200/50 p-4 transition-all hover:shadow-sm hover:border-emerald-300/50">
+              <div className="rounded-xl bg-linear-to-br from-emerald-50 to-emerald-100/50 border border-emerald-200/50 p-4 transition-all hover:shadow-sm hover:border-emerald-300/50">
                 <div className="flex items-center gap-2.5 mb-1.5">
                   <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10">
                     <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
@@ -232,7 +231,7 @@ export default function UserDashboard() {
                   Every seller on Titan Soles is verified. Your purchases are protected by our authentication guarantee.
                 </p>
               </div>
-              <div className="rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-200/50 p-4 transition-all hover:shadow-sm hover:border-amber-300/50">
+              <div className="rounded-xl bg-linear-to-br from-amber-50 to-amber-100/50 border border-amber-200/50 p-4 transition-all hover:shadow-sm hover:border-amber-300/50">
                 <div className="flex items-center gap-2.5 mb-1.5">
                   <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500/10">
                     <Package className="h-3.5 w-3.5 text-amber-600" />

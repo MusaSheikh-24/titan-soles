@@ -63,7 +63,7 @@ export function Navbar({ onOpenAI, variant = "dark", offsetTop }: NavbarProps) {
       )}
       style={{ top }}
     >
-      <nav className="mx-auto flex h-14 max-w-[1440px] items-center justify-between px-5 sm:px-6 lg:px-8">
+      <nav className="mx-auto flex h-14 max-w-360 items-center justify-between px-5 sm:px-6 lg:px-8">
         <Link href="/" className="shrink-0">
           <Logo variant={isLight ? "light" : "dark"} size="sm" />
         </Link>
@@ -127,8 +127,9 @@ export function Navbar({ onOpenAI, variant = "dark", offsetTop }: NavbarProps) {
                     "absolute right-0 top-full mt-2 w-44 rounded-xl border shadow-xl z-50 overflow-hidden",
                     isLight
                       ? "border-neutral-200 bg-white shadow-neutral-200/20"
-                      : "border-white/10 bg-[#0D1B2A] shadow-black/30"
+                      : "border-white/10 shadow-black/30"
                   )}
+                  style={isLight ? {} : { backgroundColor: '#0D1B2A' }}
                 >
                   <Link
                     href={isSeller ? "/seller" : "/dashboard"}
@@ -149,8 +150,9 @@ export function Navbar({ onOpenAI, variant = "dark", offsetTop }: NavbarProps) {
                       "flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm font-medium transition-colors border-t",
                       isLight
                         ? "text-red-600 hover:bg-red-50 border-neutral-100"
-                        : "text-red-400 hover:bg-white/8 border-white/8"
+                        : "border-white/8 hover:bg-white/8"
                     )}
+                    style={!isLight ? { color: '#f87171' } : {}}
                   >
                     <LogOut className="h-4 w-4" />
                     Logout
