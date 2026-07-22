@@ -9,4 +9,5 @@
 # ui
 - Prefer simple, minimal UI styling for dropdown menus and profile buttons (avatar icon only, no gradient, no user name, no email header, no chevron animation). Confidence: 0.65
 - Use fully solid (non-transparent/opacity) background colors for profile dropdown popups instead of transparency or semi-transparent backgrounds. Confidence: 0.80
+- Prefer targeted incremental improvements to existing pages rather than full rewrites; do not completely overwrite or remake pages when the user asks for improvements. Confidence: 0.65
 
