@@ -44,14 +44,6 @@ export default function SignUpPage() {
 
     useEffect(() => {
         setMounted(true);
-        document.body.style.overflow = "hidden";
-        document.body.style.position = "fixed";
-        document.body.style.width = "100%";
-        return () => {
-            document.body.style.overflow = "";
-            document.body.style.position = "";
-            document.body.style.width = "";
-        };
     }, []);
 
     const validateForm = () => {
@@ -95,7 +87,7 @@ export default function SignUpPage() {
     ];
 
     return (
-        <div className="h-dvh w-screen overflow-hidden flex relative bg-white">
+        <div className="h-screen w-full overflow-hidden flex relative bg-white">
             {/* ===== LEFT: Brand Panel ===== */}
             <motion.div
                 initial={{ opacity: 0, x: -60 }}
