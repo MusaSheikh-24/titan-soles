@@ -171,7 +171,7 @@ export default function SignInPage() {
                 >
                     <div className="border-l-2 border-blue-600/50 pl-4">
                         <p className="text-sm text-gray-400 italic">
-                            &ldquo;The best marketplace for sneakerheads. The AI matching is uncanny.&rdquo;
+                            &ldquo;The best marketplace for sneakerhead. The AI matching is uncanny.&rdquo;
                         </p>
                         <p className="text-xs text-gray-500 mt-1.5 font-medium">
                             — Marcus J., Verified Collector
