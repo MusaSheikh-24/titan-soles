@@ -655,19 +655,85 @@ export default function BecomeSellerPage() {
                     align="center"
                   />
                 </FadeUp>
-                <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                  {HOW_IT_WORKS.map((step, i) => (
-                    <FadeUp key={step.title} delay={0.1 * i}>
-                      <div className="group relative rounded-3xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white text-sm font-bold mb-4">
-                          {step.step}
+                <div className="relative mt-16 lg:mt-20">
+                  {/* Desktop: connected arc line */}
+                  <svg
+                    className="hidden lg:block absolute inset-0 w-full h-full pointer-events-none"
+                    viewBox="0 0 1200 200"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M60 160 Q 300 0, 540 160 T 1020 160"
+                      fill="none"
+                      stroke="url(#stepGrad)"
+                      strokeWidth="2"
+                      strokeDasharray="6 6"
+                      className="opacity-40"
+                    />
+                    <defs>
+                      <linearGradient id="stepGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#2563eb" />
+                        <stop offset="50%" stopColor="#38bdf8" />
+                        <stop offset="100%" stopColor="#2563eb" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <div className="relative grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+                    {HOW_IT_WORKS.map((step, i) => (
+                      <FadeUp key={step.title} delay={0.12 * i}>
+                        <div className="group relative flex flex-col items-center text-center px-4">
+                          {/* Step number circle */}
+                          <div className="relative mb-5">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-600 text-white text-lg font-bold shadow-lg shadow-blue-600/20 ring-4 ring-blue-100 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-blue-600/30 group-hover:scale-105">
+                              {step.step}
+                            </div>
+                            {/* Desktop connector dot */}
+                            {i < HOW_IT_WORKS.length - 1 && (
+                              <div className="hidden lg:block absolute -right-[calc(50%+1.5rem)] top-1/2 -translate-y-1/2 w-[calc(100%-3rem)] h-px bg-gradient-to-r from-blue-600/0 via-blue-400/30 to-blue-600/0" />
+                            )}
+                          </div>
+                          {/* Icon */}
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 mb-3">
+                            <step.icon className="w-5 h-5 text-blue-600" />
+                          </div>
+                          <h3 className="text-lg font-bold text-gray-900 mb-1.5">{step.title}</h3>
+                          <p className="text-sm text-gray-500 leading-relaxed max-w-[22ch]">{step.description}</p>
+                          {/* Step badge */}
+                          {i === 0 && (
+                            <span className="mt-3 inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-semibold text-blue-600">
+                              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
+                              Start here
+                            </span>
+                          )}
+                          {i === HOW_IT_WORKS.length - 1 && (
+                            <span className="mt-3 inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-0.5 text-[10px] font-semibold text-green-700">
+                              <Check className="w-3 h-3" />
+                              Live
+                            </span>
+                          )}
                         </div>
-                        <step.icon className="w-5 h-5 text-blue-600 mb-3" />
-                        <h3 className="text-lg font-bold text-gray-900 mb-1.5">{step.title}</h3>
-                        <p className="text-sm text-gray-500 leading-relaxed">{step.description}</p>
+                      </FadeUp>
+                    ))}
+                  </div>
+                  {/* Progress bar */}
+                  <FadeUp delay={0.6}>
+                    <div className="mt-14 mx-auto max-w-lg">
+                      <div className="flex items-center justify-between mb-2 text-xs text-gray-400">
+                        <span>Apply</span>
+                        <span className="font-semibold text-blue-600">4 steps</span>
+                        <span>Live</span>
                       </div>
-                    </FadeUp>
-                  ))}
+                      <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                        <motion.div
+                          initial={{ width: "0%" }}
+                          whileInView={{ width: "100%" }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 1.5, ease: "easeInOut" }}
+                          className="h-full rounded-full bg-gradient-to-r from-blue-600 via-cyan-400 to-blue-600"
+                        />
+                      </div>
+                    </div>
+                  </FadeUp>
                 </div>
               </div>
             </SectionShell>
