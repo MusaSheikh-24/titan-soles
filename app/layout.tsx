@@ -44,7 +44,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full scroll-smooth`}>
-      <body className="h-full min-h-screen bg-[#08111E] font-sans text-white antialiased">
+      <body className="h-full min-h-screen bg-[#08111E] font-sans text-base text-white antialiased">
         <Providers>
           <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
         </Providers>
