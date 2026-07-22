@@ -87,7 +87,7 @@ export default function SignUpPage() {
     ];
 
     return (
-        <div className="h-screen w-full overflow-hidden flex relative bg-white">
+        <div className="h-full w-full overflow-hidden flex relative bg-white">
             {/* ===== LEFT: Brand Panel ===== */}
             <motion.div
                 initial={{ opacity: 0, x: -60 }}
