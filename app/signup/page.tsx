@@ -197,7 +197,7 @@ export default function SignUpPage() {
             >
                 <div className="w-full max-w-md flex flex-col justify-center h-full">
                     {/* Back Home link */}
-                    <div className="mb-3">
+                    <div className="mb-2">
                         <Link
                             href="/"
                             className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-gray-900 transition-colors"
@@ -212,10 +212,10 @@ export default function SignUpPage() {
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.15 }}
-                        className="mb-4"
+                        className="mb-3"
                     >
                         <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Create your account</h1>
-                        <p className="mt-1 text-sm text-gray-500">Join the Titan community and discover your next pair.</p>
+                        <p className="mt-0.5 text-sm text-gray-500">Join the Titan community and discover your next pair.</p>
                     </motion.div>
 
                     {/* Account Type Selector */}
@@ -223,10 +223,10 @@ export default function SignUpPage() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="mb-4"
+                        className="mb-3"
                     >
-                        <label className="block text-xs font-semibold text-gray-700 mb-2">I want to join as a</label>
-                        <div className="grid grid-cols-2 gap-3">
+                        <label className="block text-xs font-semibold text-gray-700 mb-1.5">I want to join as a</label>
+                        <div className="grid grid-cols-2 gap-2.5">
                             {(["user", "seller"] as const).map((r) => {
                                 const active = role === r;
                                 const Icon = r === "user" ? User : Store;
@@ -235,14 +235,14 @@ export default function SignUpPage() {
                                         key={r}
                                         type="button"
                                         onClick={() => setRole(r)}
-                                        className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border-2 transition-all duration-200 cursor-pointer ${active ? "border-blue-500 bg-blue-50/60 shadow-sm" : "border-gray-100 bg-white hover:border-gray-200 hover:shadow-sm"
+                                        className={`flex items-center gap-2 px-3 py-2 rounded-xl border-2 transition-all duration-200 cursor-pointer ${active ? "border-blue-500 bg-blue-50/60 shadow-sm" : "border-gray-100 bg-white hover:border-gray-200 hover:shadow-sm"
                                             }`}
                                     >
                                         <div
-                                            className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${active ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-400"
+                                            className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors ${active ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-400"
                                                 }`}
                                         >
-                                            <Icon className="w-4 h-4" />
+                                            <Icon className="w-3.5 h-3.5" />
                                         </div>
                                         <div className="text-left">
                                             <p className={`text-xs font-bold ${active ? "text-blue-700" : "text-gray-900"}`}>
@@ -264,11 +264,11 @@ export default function SignUpPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.25 }}
                         onSubmit={handleSubmit}
-                        className="space-y-3.5"
+                        className="space-y-2.5"
                     >
                         {/* Full Name */}
                         <div>
-                            <label className="block text-xs font-semibold text-gray-700 mb-1.5">Full Name</label>
+                            <label className="block text-xs font-semibold text-gray-700 mb-1">Full Name</label>
                             <div className="relative">
                                 <User
                                     className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${focusedField === "name" ? "text-blue-600" : "text-gray-400"
@@ -280,13 +280,13 @@ export default function SignUpPage() {
                                     onChange={(e) => setName(e.target.value)}
                                     onFocus={() => setFocusedField("name")}
                                     onBlur={() => setFocusedField(null)}
-                                    className={`w-full pl-9 pr-3.5 py-2.5 bg-gray-50 border ${errors.name ? "border-red-400 focus:ring-red-500/20" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
+                                    className={`w-full pl-9 pr-3.5 py-2 bg-gray-50 border ${errors.name ? "border-red-400 focus:ring-red-500/20" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
                                         } rounded-xl text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 transition-all`}
                                     placeholder="John Doe"
                                 />
                             </div>
                             {errors.name && (
-                                <p className="flex items-center gap-1 mt-1 text-red-500 text-xs">
+                                <p className="flex items-center gap-1 mt-0.5 text-red-500 text-xs">
                                     <AlertCircle className="w-3 h-3 shrink-0" /> {errors.name}
                                 </p>
                             )}
@@ -294,7 +294,7 @@ export default function SignUpPage() {
 
                         {/* Email */}
                         <div>
-                            <label className="block text-xs font-semibold text-gray-700 mb-1.5">Email Address</label>
+                            <label className="block text-xs font-semibold text-gray-700 mb-1">Email Address</label>
                             <div className="relative">
                                 <Mail
                                     className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${focusedField === "email" ? "text-blue-600" : "text-gray-400"
@@ -306,13 +306,13 @@ export default function SignUpPage() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     onFocus={() => setFocusedField("email")}
                                     onBlur={() => setFocusedField(null)}
-                                    className={`w-full pl-9 pr-3.5 py-2.5 bg-gray-50 border ${errors.email ? "border-red-400 focus:ring-red-500/20" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
+                                    className={`w-full pl-9 pr-3.5 py-2 bg-gray-50 border ${errors.email ? "border-red-400 focus:ring-red-500/20" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
                                         } rounded-xl text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 transition-all`}
                                     placeholder="you@example.com"
                                 />
                             </div>
                             {errors.email && (
-                                <p className="flex items-center gap-1 mt-1 text-red-500 text-xs">
+                                <p className="flex items-center gap-1 mt-0.5 text-red-500 text-xs">
                                     <AlertCircle className="w-3 h-3 shrink-0" /> {errors.email}
                                 </p>
                             )}
@@ -320,7 +320,7 @@ export default function SignUpPage() {
 
                         {/* Password */}
                         <div>
-                            <label className="block text-xs font-semibold text-gray-700 mb-1.5">Password</label>
+                            <label className="block text-xs font-semibold text-gray-700 mb-1">Password</label>
                             <div className="relative">
                                 <Lock
                                     className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${focusedField === "password" ? "text-blue-600" : "text-gray-400"
@@ -332,7 +332,7 @@ export default function SignUpPage() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     onFocus={() => setFocusedField("password")}
                                     onBlur={() => setFocusedField(null)}
-                                    className={`w-full pl-9 pr-9 py-2.5 bg-gray-50 border ${errors.password ? "border-red-400 focus:ring-red-500/20" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
+                                    className={`w-full pl-9 pr-9 py-2 bg-gray-50 border ${errors.password ? "border-red-400 focus:ring-red-500/20" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
                                         } rounded-xl text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 transition-all`}
                                     placeholder="••••••••"
                                 />
@@ -345,7 +345,7 @@ export default function SignUpPage() {
                                 </button>
                             </div>
                             {errors.password && (
-                                <p className="flex items-center gap-1 mt-1 text-red-500 text-xs">
+                                <p className="flex items-center gap-1 mt-0.5 text-red-500 text-xs">
                                     <AlertCircle className="w-3 h-3 shrink-0" /> {errors.password}
                                 </p>
                             )}
@@ -353,7 +353,7 @@ export default function SignUpPage() {
 
                         {/* Confirm Password */}
                         <div>
-                            <label className="block text-xs font-semibold text-gray-700 mb-1.5">Confirm Password</label>
+                            <label className="block text-xs font-semibold text-gray-700 mb-1">Confirm Password</label>
                             <div className="relative">
                                 <Lock
                                     className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${focusedField === "confirmPassword" ? "text-blue-600" : "text-gray-400"
@@ -365,7 +365,7 @@ export default function SignUpPage() {
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     onFocus={() => setFocusedField("confirmPassword")}
                                     onBlur={() => setFocusedField(null)}
-                                    className={`w-full pl-9 pr-9 py-2.5 bg-gray-50 border ${errors.confirmPassword ? "border-red-400 focus:ring-red-500/20" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
+                                    className={`w-full pl-9 pr-9 py-2 bg-gray-50 border ${errors.confirmPassword ? "border-red-400 focus:ring-red-500/20" : "border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
                                         } rounded-xl text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 transition-all`}
                                     placeholder="••••••••"
                                 />
@@ -378,7 +378,7 @@ export default function SignUpPage() {
                                 </button>
                             </div>
                             {errors.confirmPassword && (
-                                <p className="flex items-center gap-1 mt-1 text-red-500 text-xs">
+                                <p className="flex items-center gap-1 mt-0.5 text-red-500 text-xs">
                                     <AlertCircle className="w-3 h-3 shrink-0" /> {errors.confirmPassword}
                                 </p>
                             )}
@@ -406,7 +406,7 @@ export default function SignUpPage() {
                                 </span>
                             </label>
                             {errors.agreeTerms && (
-                                <p className="flex items-center gap-1 mt-1 text-red-500 text-xs">
+                                <p className="flex items-center gap-1 mt-0.5 text-red-500 text-xs">
                                     <AlertCircle className="w-3 h-3 shrink-0" /> {errors.agreeTerms}
                                 </p>
                             )}
@@ -416,7 +416,7 @@ export default function SignUpPage() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md shadow-blue-600/20 hover:shadow-lg hover:shadow-blue-600/30 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-md cursor-pointer mt-1"
+                            className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md shadow-blue-600/20 hover:shadow-lg hover:shadow-blue-600/30 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-md cursor-pointer"
                         >
                             {isLoading ? (
                                 <motion.div
@@ -434,7 +434,7 @@ export default function SignUpPage() {
                     </motion.form>
 
                     {/* Divider */}
-                    <div className="relative my-4">
+                    <div className="relative my-3">
                         <div className="absolute inset-0 flex items-center">
                             <div className="w-full border-t border-gray-100" />
                         </div>
@@ -444,10 +444,10 @@ export default function SignUpPage() {
                     </div>
 
                     {/* Social */}
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2.5">
                         <button
                             onClick={() => console.log("Sign up with Google")}
-                            className="flex items-center justify-center gap-2 py-2.5 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 rounded-xl text-gray-700 text-xs font-semibold transition-all cursor-pointer"
+                            className="flex items-center justify-center gap-2 py-2 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 rounded-xl text-gray-700 text-xs font-semibold transition-all cursor-pointer"
                         >
                             <svg className="w-4 h-4" viewBox="0 0 24 24">
                                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -459,7 +459,7 @@ export default function SignUpPage() {
                         </button>
                         <button
                             onClick={() => console.log("Sign up with GitHub")}
-                            className="flex items-center justify-center gap-2 py-2.5 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 rounded-xl text-gray-700 text-xs font-semibold transition-all cursor-pointer"
+                            className="flex items-center justify-center gap-2 py-2 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 rounded-xl text-gray-700 text-xs font-semibold transition-all cursor-pointer"
                         >
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                 <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
@@ -469,7 +469,7 @@ export default function SignUpPage() {
                     </div>
 
                     {/* Sign in link */}
-                    <p className="text-center text-xs text-gray-500 mt-4">
+                    <p className="text-center text-xs text-gray-500 mt-3">
                         Already have an account?{" "}
                         <Link href="/signin" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors">
                             Sign in

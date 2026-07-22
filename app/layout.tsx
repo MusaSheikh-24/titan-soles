@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -37,6 +37,15 @@ export const metadata: Metadata = {
       "Find your perfect shoes with natural language. Verified stores. AI-curated recommendations.",
   },
   robots: { index: true, follow: true },
+};
+
+// ✅ YEH NAYA VIEWPORT EXPORT ADD KIYA GAYA HAI (Zoom Issue Fix)
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#08111E", // Aapke bg-[#08111E] ke sath match karne ke liye
 };
 
 export default function RootLayout({
