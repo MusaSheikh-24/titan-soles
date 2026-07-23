@@ -10,4 +10,6 @@
 - Prefer simple, minimal UI styling for dropdown menus and profile buttons (avatar icon only, no gradient, no user name, no email header, no chevron animation). Confidence: 0.65
 - Use fully solid (non-transparent/opacity) background colors for profile dropdown popups instead of transparency or semi-transparent backgrounds. Confidence: 0.80
 - Prefer targeted incremental improvements to existing pages rather than full rewrites; do not completely overwrite or remake pages when the user asks for improvements. Confidence: 0.65
+- Keep videos fully visible at full height with no UI overlays; position all UI elements (profile info, action buttons, product cards, captions) outside the video on the sides or below instead. Confidence: 0.75
+- For video pages on the Titan Soles project: remove top headers entirely and use a left sidebar for navigation/filters instead; give the video maximum vertical space. Confidence: 0.65
 

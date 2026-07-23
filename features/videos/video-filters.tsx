@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles, Store, Flame, Tag } from "lucide-react";
+import { Sparkles, Flame, Tag } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type FeedTab = "for-you" | "following" | "new" | "trending";
@@ -16,9 +16,9 @@ interface VideoFiltersProps {
   value: VideoFiltersState;
   onChange: (next: VideoFiltersState) => void;
   brands: string[];
-  stores: string[];
-  categories: string[];
-  resultCount: number;
+  stores?: string[];
+  categories?: string[];
+  resultCount?: number;
 }
 
 const TABS: { id: FeedTab; label: string; icon?: typeof Sparkles }[] = [
@@ -32,9 +32,6 @@ export function VideoFilters({
   value,
   onChange,
   brands,
-  stores,
-  categories,
-  resultCount,
 }: VideoFiltersProps) {
   const set = (patch: Partial<VideoFiltersState>) =>
     onChange({ ...value, ...patch });
@@ -46,9 +43,10 @@ export function VideoFilters({
     value.brand !== null || value.store !== null || value.category !== null;
 
   return (
-    <div className="pointer-events-auto absolute inset-x-0 top-14 z-40 px-3 sm:top-[3.75rem]">
-      <div className="mx-auto flex max-w-md flex-col gap-2 lg:max-w-lg">
-        <div className="flex gap-1 overflow-x-auto rounded-full border border-white/10 bg-black/45 p-1 backdrop-blur-xl scrollbar-hide">
+    <div className="w-full border-b border-white/[0.06] bg-[#0B1729]/80 backdrop-blur-xl">
+      <div className="mx-auto w-full px-3 py-1.5">
+        {/* Tab row — tighter */}
+        <div className="flex gap-1 overflow-x-auto scrollbar-hide">
           {TABS.map((tab) => {
             const active = value.tab === tab.id;
             const Icon = tab.icon;
@@ -58,10 +56,10 @@ export function VideoFilters({
                 type="button"
                 onClick={() => set({ tab: tab.id })}
                 className={cn(
-                  "inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-[12px] font-semibold tracking-tight transition-all duration-200",
+                  "inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold tracking-tight transition-all duration-200",
                   active
-                    ? "bg-white text-[#0F172A] shadow-lg shadow-black/20"
-                    : "text-white/70 hover:bg-white/10 hover:text-white"
+                    ? "bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white shadow-sm shadow-blue-500/25"
+                    : "text-[#94A3B8] hover:bg-white/5 hover:text-white"
                 )}
               >
                 {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
@@ -71,21 +69,22 @@ export function VideoFilters({
           })}
         </div>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+        {/* Chip row — tighter */}
+        <div className="mt-1.5 flex items-center gap-1 overflow-x-auto scrollbar-hide">
           <button
             type="button"
             onClick={clearChips}
             className={cn(
-              "inline-flex shrink-0 items-center gap-1 rounded-full border px-3 py-1.5 text-[11px] font-semibold backdrop-blur-xl transition-all duration-200",
+              "inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold transition-all duration-200",
               !hasChip
-                ? "border-white/25 bg-white text-[#0F172A]"
-                : "border-white/10 bg-black/40 text-white/75 hover:bg-black/55 hover:text-white"
+                ? "border-white/[0.08] bg-white/10 text-white"
+                : "border-white/[0.06] text-[#94A3B8] hover:bg-white/5 hover:text-white"
             )}
           >
             All
           </button>
 
-          {brands.map((brand) => (
+          {brands.slice(0, 6).map((brand) => (
             <button
               key={brand}
               type="button"
@@ -93,62 +92,20 @@ export function VideoFilters({
                 set({ brand: value.brand === brand ? null : brand })
               }
               className={cn(
-                "inline-flex shrink-0 items-center rounded-full border px-3 py-1.5 text-[11px] font-semibold backdrop-blur-xl transition-all duration-200",
+                "inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold transition-all duration-200",
                 value.brand === brand
-                  ? "border-[#2563EB]/50 bg-[#2563EB] text-white shadow-lg shadow-blue-500/25"
-                  : "border-white/10 bg-black/40 text-white/75 hover:bg-black/55 hover:text-white"
+                  ? "border-[#2563EB]/50 bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white"
+                  : "border-white/[0.06] text-[#94A3B8] hover:bg-white/5 hover:text-white"
               )}
             >
               {brand}
             </button>
           ))}
 
-          <span className="mx-0.5 h-4 w-px shrink-0 bg-white/15" aria-hidden />
-
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() =>
-                set({ category: value.category === cat ? null : cat })
-              }
-              className={cn(
-                "inline-flex shrink-0 items-center rounded-full border px-3 py-1.5 text-[11px] font-semibold backdrop-blur-xl transition-all duration-200",
-                value.category === cat
-                  ? "border-white/30 bg-white/20 text-white"
-                  : "border-white/10 bg-black/40 text-white/75 hover:bg-black/55 hover:text-white"
-              )}
-            >
-              {cat}
-            </button>
-          ))}
-
-          <span className="mx-0.5 h-4 w-px shrink-0 bg-white/15" aria-hidden />
-
-          {stores.map((store) => (
-            <button
-              key={store}
-              type="button"
-              onClick={() =>
-                set({ store: value.store === store ? null : store })
-              }
-              className={cn(
-                "inline-flex shrink-0 items-center gap-1 rounded-full border px-3 py-1.5 text-[11px] font-semibold backdrop-blur-xl transition-all duration-200",
-                value.store === store
-                  ? "border-[#38BDF8]/40 bg-[#38BDF8]/20 text-white"
-                  : "border-white/10 bg-black/40 text-white/75 hover:bg-black/55 hover:text-white"
-              )}
-            >
-              <Store className="h-3 w-3" />
-              {store}
-            </button>
-          ))}
+          {brands.length > 6 && (
+            <span className="shrink-0 text-[11px] text-[#64748B]">+{brands.length - 6}</span>
+          )}
         </div>
-
-        <p className="px-1 text-[10px] font-medium tracking-wide text-white/45">
-          {resultCount} footwear {resultCount === 1 ? "video" : "videos"} ·
-          verified stores only
-        </p>
       </div>
     </div>
   );
